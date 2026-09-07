@@ -1,0 +1,17 @@
+{
+  "name": "vaultpay-agent",
+  "version": "0.1.0",
+  "description": "VaultPay Autonomous B2B Procurement Agent with Terminal 3 TEE Guardrails",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "node dist/test.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "typescript": "^5.5.2"
+  }
+}

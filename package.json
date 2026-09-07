@@ -1,0 +1,24 @@
+{
+  "name": "vaultpay",
+  "version": "0.1.0",
+  "private": true,
+  "description": "VaultPay: Autonomous B2B Procurement Agent with Terminal 3 TEE Hardware Enclave Guardrails",
+  "scripts": {
+    "dev": "npm run dev --prefix dashboard",
+    "test": "npm run test --prefix agent",
+    "build:agent": "npm run build --prefix agent",
+    "build:dashboard": "npm run build --prefix dashboard",
+    "build": "npm run build:agent && npm run build:dashboard"
+  },
+  "keywords": [
+    "terminal-3",
+    "tee",
+    "ai-agent",
+    "autonomous-agent",
+    "xendit",
+    "verifiable-credentials",
+    "ai-tinkerers"
+  ],
+  "author": "VaultPay Team",
+  "license": "MIT"
+}

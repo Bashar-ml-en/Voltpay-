@@ -1,0 +1,20 @@
+[package]
+name = "vaultpay-tee-contract"
+version = "0.1.0"
+edition = "2021"
+description = "Terminal 3 TEE Enclave policy contract for VaultPay: Hardware-enforced guardrails for autonomous spending"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+hex = "0.4"
+
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
