@@ -218,23 +218,54 @@ export default function Dashboard() {
       {/* ========================================================================= */}
       <header className="border-b border-slate-800/80 bg-[#0A0E1A]/95 backdrop-blur sticky top-0 z-50 px-4 lg:px-8 py-3">
         <div className="max-w-[1520px] mx-auto flex flex-wrap items-center justify-between gap-4">
-          {/* Logo & Meta Badges */}
+          {/* Terminal 3 Inspired VP Monogram Logo & Meta Badges */}
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-600 p-0.5 shadow-lg shadow-cyan-500/20">
-              <div className="h-full w-full bg-[#090D18] rounded-[10px] flex items-center justify-center">
-                <Shield className="h-5 w-5 text-cyan-400" />
-              </div>
+            <div className="relative flex items-center justify-center h-10 w-10 rounded-xl bg-[#0F172A] border border-[#73C1E1]/50 shadow-[0_0_20px_rgba(115,193,225,0.3)] overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#73C1E1]/20 via-transparent to-[#1F2F4A]/60" />
+              {/* Custom Interlocking Geometric VP Monogram */}
+              <svg
+                className="relative h-6 w-6 transform group-hover:scale-105 transition-transform"
+                viewBox="0 0 32 32"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <defs>
+                  <linearGradient id="t3BrandVP" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#A8E5FA" />
+                    <stop offset="45%" stopColor="#73C1E1" />
+                    <stop offset="100%" stopColor="#2563EB" />
+                  </linearGradient>
+                </defs>
+                {/* V stroke */}
+                <path
+                  d="M4 9L11.5 24L17 12"
+                  stroke="url(#t3BrandVP)"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                {/* P stroke & vault loop */}
+                <path
+                  d="M17 24V8H23C25.76 8 28 10.24 28 13C28 15.76 25.76 18 23 18H17"
+                  stroke="url(#t3BrandVP)"
+                  strokeWidth="3.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                {/* Cryptographic TEE Enclave node accent */}
+                <circle cx="17" cy="12" r="1.5" fill="#73C1E1" />
+              </svg>
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-black tracking-tight text-white flex items-center gap-1.5">
-                  VaultPay
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-950/80 text-cyan-400 border border-cyan-700/50 uppercase tracking-widest">
+                  <span className="text-[#73C1E1]">V</span>ault<span className="text-[#73C1E1]">P</span>ay
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#1F2F4A]/80 text-[#73C1E1] border border-[#73C1E1]/50 uppercase tracking-widest">
                     v2.4 TEE
                   </span>
                 </h1>
-                <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-medium text-slate-400 bg-slate-900/80 px-2 py-0.5 rounded-full border border-slate-800">
-                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-medium text-slate-300 bg-[#0F172A] px-2 py-0.5 rounded-full border border-[#73C1E1]/30">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#73C1E1] animate-pulse" />
                   Terminal 3 Network (T3N)
                 </span>
                 <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/50">
