@@ -8,7 +8,20 @@
     "test": "npm run test --prefix agent",
     "build:agent": "npm run build --prefix agent",
     "build:dashboard": "npm run build --prefix dashboard",
-    "build": "npm run build:agent && npm run build:dashboard"
+    "build": "npm run build --prefix dashboard",
+    "start": "npm run start --prefix dashboard"
+  },
+  "dependencies": {
+    "next": "^14.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.400.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.2"
   },
   "keywords": [
     "terminal-3",
