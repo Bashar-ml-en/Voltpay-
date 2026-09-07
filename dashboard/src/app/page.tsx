@@ -257,18 +257,33 @@ export default function Dashboard() {
               </svg>
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-black tracking-tight text-white flex items-center gap-1.5">
-                  <span className="text-[#73C1E1]">V</span>ault<span className="text-[#73C1E1]">P</span>ay
-                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#1F2F4A]/80 text-[#73C1E1] border border-[#73C1E1]/50 uppercase tracking-widest">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h1 className="text-xl font-black tracking-tight text-white flex items-center gap-2">
+                  <span className="inline-flex items-baseline tracking-tight font-black select-none">
+                    <span className="text-[#73C1E1]">V</span>ault<span className="text-[#73C1E1]">P</span>ay
+                  </span>
+                  <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-[#1F2F4A]/90 text-[#73C1E1] border border-[#73C1E1]/50 uppercase tracking-widest">
                     v2.4 TEE
                   </span>
                 </h1>
-                <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-medium text-slate-300 bg-[#0F172A] px-2 py-0.5 rounded-full border border-[#73C1E1]/30">
+
+                {/* Visible Live Deployment URL with Logo */}
+                <a
+                  href="https://vaultpay-ai.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-[11px] font-mono font-medium text-[#73C1E1] hover:text-white bg-[#0F172A] hover:bg-[#1E293B] px-2.5 py-0.5 rounded-full border border-[#73C1E1]/40 transition shadow-sm hover:shadow-[0_0_12px_rgba(115,193,225,0.25)]"
+                >
                   <span className="h-1.5 w-1.5 rounded-full bg-[#73C1E1] animate-pulse" />
-                  Terminal 3 Network (T3N)
+                  <span>vaultpay-ai.vercel.app</span>
+                  <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+                </a>
+
+                <span className="hidden lg:inline-flex items-center gap-1 text-[11px] font-medium text-slate-300 bg-[#0F172A] px-2 py-0.5 rounded-full border border-slate-700/60">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#73C1E1]" />
+                  Terminal 3 Network
                 </span>
-                <span className="hidden md:inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/50">
+                <span className="hidden lg:inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/50">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   Xendit Rails
                 </span>
