@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { VaultPayAgent, DEFAULT_AUTHORIZED_VC } from "../../../../../agent/src/agent";
+import { VaultPayAgent, DEFAULT_AUTHORIZED_VC } from "@/agent/agent";
 
 export const dynamic = "force-dynamic";
 

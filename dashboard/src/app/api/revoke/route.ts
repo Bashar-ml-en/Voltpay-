@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { T3NEnclaveService } from "../../../../../agent/src/t3nEnclave";
+import { T3NEnclaveService } from "@/agent/t3nEnclave";
 
 export const dynamic = "force-dynamic";
 
