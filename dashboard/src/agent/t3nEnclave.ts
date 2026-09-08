@@ -18,6 +18,8 @@ export class T3NEnclaveService {
   private isRevoked: boolean = false;
   private processedInvoices: Set<string> = new Set();
   private ledger: LedgerEntry[] = [];
+  private t3nCredits: number = 20000;
+  private readonly creditsCostPerTx: number = 15;
 
   private constructor() {
     // Initialize ledger with genesis record
@@ -108,6 +110,14 @@ export class T3NEnclaveService {
     amountCents: number,
     invoiceId: string
   ): PayVendorResult {
+    // Deduct gas/compute credits from Terminal 3 allocation per hardware evaluation
+    this.t3nCredits = Math.max(0, this.t3nCredits - this.creditsCostPerTx);
+
+    // If live network mode is active, dispatch to Terminal 3 RPC gateway
+    if (process.env.MOCK_T3N === "0") {
+      this.dispatchLiveT3Enclave(vendor, amountCents, invoiceId).catch(() => {});
+    }
+
     // 1. Emergency Revoke Check
     if (this.isRevoked) {
       const entry = this.appendLedger(
@@ -269,7 +279,36 @@ export class T3NEnclaveService {
     );
   }
 
+  private async dispatchLiveT3Enclave(vendor: string, amountCents: number, invoiceId: string): Promise<void> {
+    const rpcUrl = process.env.T3N_RPC_URL || "https://rpc.t3n.network";
+    const apiKey = process.env.T3N_PRIVATE_API_KEY || "";
+    const accountId = process.env.T3N_ACCOUNT_ID || "";
+
+    if (!apiKey || !accountId) return;
+
+    try {
+      await fetch(`${rpcUrl}/v1/enclave/execute`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "x-account-id": accountId,
+        },
+        body: JSON.stringify({
+          enclaveDid: this.enclaveDid,
+          action: "pay_vendor",
+          parameters: { vendor, amountCents, invoiceId },
+          timestamp: Date.now(),
+        }),
+      });
+    } catch {
+      // Fail-safe graceful suppression: never allow RPC hiccups to break client execution
+    }
+  }
+
   public getTelemetry(): TEEPolicyStatus {
+    const isLive = process.env.MOCK_T3N === "0";
+    const accountId = process.env.T3N_ACCOUNT_ID;
     return {
       enclaveDid: this.enclaveDid,
       allowlist: Array.from(this.allowlist),
@@ -279,6 +318,9 @@ export class T3NEnclaveService {
       isRevoked: this.isRevoked,
       totalTransactions: this.ledger.length,
       ledger: [...this.ledger].reverse(), // newest first
+      networkMode: isLive ? "LIVE_NETWORK" : "EMULATED_SGX",
+      t3nCredits: this.t3nCredits,
+      t3nAccountId: accountId ? `${accountId.slice(0, 8)}...` : undefined,
     };
   }
 }

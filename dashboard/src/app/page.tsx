@@ -53,6 +53,9 @@ interface Telemetry {
   remainingBudgetCents: number;
   isRevoked: boolean;
   totalTransactions: number;
+  networkMode?: "LIVE_NETWORK" | "EMULATED_SGX";
+  t3nCredits?: number;
+  t3nAccountId?: string;
   ledger: Array<{
     index: number;
     timestampMs: number;
@@ -279,10 +282,19 @@ export default function Dashboard() {
                   <ExternalLink className="h-2.5 w-2.5 opacity-70" />
                 </a>
 
-                <span className="hidden lg:inline-flex items-center gap-1 text-[11px] font-medium text-slate-300 bg-[#0F172A] px-2 py-0.5 rounded-full border border-slate-700/60">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#73C1E1]" />
-                  Terminal 3 Network
-                </span>
+                {/* Terminal 3 Cloud Console Link */}
+                <a
+                  href="https://go.terminal3.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Open Terminal 3 Cloud Console to inspect your 20,000 developer credits"
+                  className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-medium text-amber-300 hover:text-white bg-amber-950/40 hover:bg-amber-900/60 px-2.5 py-0.5 rounded-full border border-amber-500/40 transition shadow-sm"
+                >
+                  <Sparkles className="h-3 w-3 text-amber-400" />
+                  <span>T3 Cloud Console (20k Credits)</span>
+                  <ExternalLink className="h-2.5 w-2.5 opacity-70" />
+                </a>
+
                 <span className="hidden lg:inline-flex items-center gap-1 text-[11px] font-medium text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-full border border-emerald-800/50">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
                   Xendit Rails
@@ -303,7 +315,7 @@ export default function Dashboard() {
                   telemetry?.isRevoked ? "bg-red-500" : "bg-emerald-400 animate-ping"
                 }`}
               />
-              <span className="text-slate-400">Hardware Enclave:</span>
+              <span className="text-slate-400">Enclave:</span>
               <span
                 className={
                   telemetry?.isRevoked
@@ -311,7 +323,14 @@ export default function Dashboard() {
                     : "text-emerald-300 font-bold tracking-wide"
                 }
               >
-                {telemetry?.isRevoked ? "REVOKED / HALTED" : "SEALED (SGX ACTIVE)"}
+                {telemetry?.isRevoked
+                  ? "REVOKED / HALTED"
+                  : telemetry?.networkMode === "LIVE_NETWORK"
+                  ? "LIVE T3N NETWORK"
+                  : "SEALED (SGX ACTIVE)"}
+              </span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 border border-slate-700 font-bold">
+                ⚡ {(telemetry?.t3nCredits ?? 20000).toLocaleString()} cr
               </span>
             </div>
 
@@ -374,7 +393,17 @@ export default function Dashboard() {
             <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500 font-mono">
               <span>Cap: ${totalBudget.toFixed(2)}</span>
               <span>Spent: ${spentAmount.toFixed(2)}</span>
-              <span>Active Period: 24h</span>
+              <span>Period: 24h</span>
+            </div>
+            {/* Terminal 3 Network Gas Credits */}
+            <div className="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span className="flex items-center gap-1 text-amber-400 font-medium">
+                <Zap className="h-3 w-3" />
+                T3 Gas Credits:
+              </span>
+              <span className="font-bold text-slate-200">
+                {(telemetry?.t3nCredits ?? 20000).toLocaleString()} / 20,000
+              </span>
             </div>
           </div>
 

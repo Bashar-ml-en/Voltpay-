@@ -77,6 +77,9 @@ export interface TEEPolicyStatus {
   isRevoked: boolean;
   totalTransactions: number;
   ledger: LedgerEntry[];
+  networkMode?: "LIVE_NETWORK" | "EMULATED_SGX";
+  t3nCredits?: number;
+  t3nAccountId?: string;
 }
 
 export interface PayVendorResult {

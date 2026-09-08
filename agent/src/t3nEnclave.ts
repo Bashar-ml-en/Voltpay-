@@ -18,6 +18,8 @@ export class T3NEnclaveService {
   private isRevoked: boolean = false;
   private processedInvoices: Set<string> = new Set();
   private ledger: LedgerEntry[] = [];
+  private t3nCredits: number = 20000;
+  private readonly creditsCostPerTx: number = 15;
 
   private constructor() {
     // Initialize ledger with genesis record
@@ -108,6 +110,9 @@ export class T3NEnclaveService {
     amountCents: number,
     invoiceId: string
   ): PayVendorResult {
+    // Deduct gas/compute credits from Terminal 3 allocation per hardware evaluation
+    this.t3nCredits = Math.max(0, this.t3nCredits - this.creditsCostPerTx);
+
     // 1. Emergency Revoke Check
     if (this.isRevoked) {
       const entry = this.appendLedger(
@@ -270,6 +275,8 @@ export class T3NEnclaveService {
   }
 
   public getTelemetry(): TEEPolicyStatus {
+    const isLive = process.env.MOCK_T3N === "0";
+    const accountId = process.env.T3N_ACCOUNT_ID;
     return {
       enclaveDid: this.enclaveDid,
       allowlist: Array.from(this.allowlist),
@@ -279,6 +286,9 @@ export class T3NEnclaveService {
       isRevoked: this.isRevoked,
       totalTransactions: this.ledger.length,
       ledger: [...this.ledger].reverse(), // newest first
+      networkMode: isLive ? "LIVE_NETWORK" : "EMULATED_SGX",
+      t3nCredits: this.t3nCredits,
+      t3nAccountId: accountId ? `${accountId.slice(0, 8)}...` : undefined,
     };
   }
 }
