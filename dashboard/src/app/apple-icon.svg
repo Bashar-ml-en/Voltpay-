@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180">
+  <defs>
+    <linearGradient id="vpGradApple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A8E5FA"/>
+      <stop offset="50%" stop-color="#73C1E1"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+  </defs>
+  <rect width="180" height="180" rx="40" fill="#0B1120"/>
+  <rect width="176" height="176" x="2" y="2" rx="38" fill="none" stroke="#1E293B" stroke-width="4"/>
+  <!-- Interlocking V stroke -->
+  <path d="M30 60L65 130L95 72" stroke="url(#vpGradApple)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- P stroke & vault loop -->
+  <path d="M95 130V50H125C142 50 155 63 155 78C155 93 142 106 125 106H95" stroke="url(#vpGradApple)" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Cryptographic TEE Enclave node accent -->
+  <circle cx="95" cy="75" r="9" fill="#73C1E1"/>
+</svg>
