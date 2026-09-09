@@ -138,10 +138,14 @@ export class T3NEnclaveService {
       };
     }
 
-    // 2. Allowlist Check (Case-insensitive)
-    const isAllowlisted = Array.from(this.allowlist).some(
-      (allowed) => allowed.trim().toLowerCase() === vendor.trim().toLowerCase()
-    );
+    // 2. Allowlist Check (Case-insensitive with corporate suffix normalization)
+    const cleanTarget = vendor.replace(/,?\s*(inc\.?|corp\.?|llc\.?|ltd\.?)$/i, "").trim().toLowerCase();
+    const isAllowlisted = Array.from(this.allowlist).some((allowed) => {
+      const cleanAllowed = allowed.replace(/,?\s*(inc\.?|corp\.?|llc\.?|ltd\.?)$/i, "").trim().toLowerCase();
+      const rawAllowed = allowed.trim().toLowerCase();
+      const rawVendor = vendor.trim().toLowerCase();
+      return rawAllowed === rawVendor || cleanAllowed === cleanTarget || cleanAllowed === rawVendor;
+    });
 
     if (!isAllowlisted) {
       const entry = this.appendLedger(

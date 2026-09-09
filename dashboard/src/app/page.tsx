@@ -156,8 +156,6 @@ export default function Dashboard() {
   const [telemetry, setTelemetry] = useState<Telemetry | null>(null);
   const [selectedScenario, setSelectedScenario] = useState<ScenarioType>("HAPPY_PATH");
   const [customPrompt, setCustomPrompt] = useState("");
-  const [customVendorInput, setCustomVendorInput] = useState("CloudForge");
-  const [customAmountInput, setCustomAmountInput] = useState<number>(450);
   const [isLoading, setIsLoading] = useState(false);
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
@@ -226,40 +224,22 @@ export default function Dashboard() {
 
     const scenarioId = scenarioOverride || selectedScenario;
     let prompt = "";
-    let amountCents = 45000;
-    let vendor = "CloudForge";
-    let isAttack = false;
 
     if (scenarioId === "CUSTOM") {
-      prompt = customPrompt || "Custom procurement order";
-      const isDetectedAttack =
-        /system\s+override|override\s+dispatch|ignore.*instructions|reroute.*(payment|funds|money)|redirect.*(payment|funds|money)|0x|hacker|escrow|bypass|jailbreak|disregard|prompt\s+inject/i.test(
-          prompt
-        );
-      isAttack = isDetectedAttack;
-      amountCents = isAttack ? 450000 : Math.round((customAmountInput || 450) * 100);
-      vendor = isAttack ? "0xHACKER_ROGUE_VENDOR" : (customVendorInput || "CloudForge");
+      prompt = customPrompt || "Order 8x H100 GPU cluster from CloudForge for $450.00";
     } else {
       const preset = PRESET_SCENARIOS.find((s) => s.id === scenarioId)!;
       prompt = preset.directive;
-      amountCents = preset.amountCents;
-      vendor = preset.vendor;
-      isAttack = preset.isAttack;
     }
 
     addLog(`>>> Dispatched directive: "${prompt.slice(0, 50)}..."`);
-    addLog(`Target: ${vendor} | Sum: $${(amountCents / 100).toFixed(2)} | AttackFlag: ${isAttack}`);
+    addLog(`Neural Reasoning: Dispatched to Google Gemini Flash for real-time unconstrained extraction...`);
 
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          prompt,
-          isAdversarialTest: isAttack,
-          customAmountCents: amountCents,
-          customVendor: vendor,
-        }),
+        body: JSON.stringify({ prompt }),
       });
 
       const data = await res.json();
@@ -363,32 +343,24 @@ export default function Dashboard() {
 
   const currentPreset = PRESET_SCENARIOS.find((s) => s.id === selectedScenario);
 
-  const isCustomAttack =
-    selectedScenario === "CUSTOM" &&
-    /system\s+override|override\s+dispatch|ignore.*instructions|reroute.*(payment|funds|money)|redirect.*(payment|funds|money)|0x|hacker|escrow|bypass|jailbreak|disregard|prompt\s+inject/i.test(
-      customPrompt
-    );
-
   const displayDirective =
     selectedScenario === "CUSTOM"
-      ? customPrompt || "Enter a custom directive below..."
+      ? customPrompt || "Enter any custom directive below..."
       : currentPreset?.directive || "";
 
   const displayVendor =
     selectedScenario === "CUSTOM"
-      ? (isCustomAttack ? "0xHACKER_ROGUE_VENDOR" : (customVendorInput || "CloudForge"))
+      ? "Dynamic (Neural Extraction via Gemini Flash)"
       : currentPreset?.vendor || "";
 
   const displayAmountCents =
     selectedScenario === "CUSTOM"
-      ? (isCustomAttack ? 450000 : (customAmountInput ? Math.round(customAmountInput * 100) : 45000))
+      ? 0
       : currentPreset?.amountCents || 0;
 
   const displayTargetPolicy =
     selectedScenario === "CUSTOM"
-      ? (isCustomAttack
-          ? "Tests CG-2 Injection Fence & CG-3 TEE Allowlist Barrier (Expect: Blocked)"
-          : "Dynamic evaluation via Google Gemini Flash & T3 Enclave")
+      ? "Evaluated end-to-end dynamically by Gemini Flash & T3 Enclave"
       : currentPreset?.targetPolicy || "";
 
   return (
@@ -743,7 +715,9 @@ export default function Dashboard() {
                 <div className="flex items-center justify-between gap-3 pt-1">
                   <div className="text-[11px] font-mono text-slate-400">
                     Vendor: <span className="text-white font-bold">{displayVendor}</span> | Amount:{" "}
-                    <span className="text-white font-bold">${(displayAmountCents / 100).toFixed(2)}</span>
+                    <span className="text-white font-bold">
+                      {selectedScenario === "CUSTOM" ? "Dynamic" : `$${(displayAmountCents / 100).toFixed(2)}`}
+                    </span>
                   </div>
 
                   <button

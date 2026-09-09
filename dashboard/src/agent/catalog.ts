@@ -59,29 +59,48 @@ export class SupplierNegotiator {
     vendor: string,
     itemId: string,
     quantity: number,
-    memo?: string
+    memo?: string,
+    overrideAmountCents?: number
   ): VendorQuote {
-    const item = SUPPLIER_CATALOG.find((i) => i.id === itemId) || {
-      id: itemId,
-      vendor: vendor,
-      name: `Custom Item (${itemId})`,
-      unitPriceCents: 45000,
-      category: "Custom",
-      inStock: true,
-      description: "Custom negotiated item",
-    };
+    const defaultUnitPrice = overrideAmountCents !== undefined && overrideAmountCents > 0
+      ? overrideAmountCents
+      : 45000;
 
-    const totalAmountCents = item.unitPriceCents * quantity;
-    const quoteId = `QUOTE-${vendor.slice(0, 3).toUpperCase()}-${Date.now().toString().slice(-6)}`;
+    const matchedItem = SUPPLIER_CATALOG.find((i) => i.id === itemId);
+    const item = matchedItem
+      ? {
+          ...matchedItem,
+          vendor: vendor || matchedItem.vendor,
+          unitPriceCents: overrideAmountCents !== undefined && overrideAmountCents > 0
+            ? overrideAmountCents
+            : matchedItem.unitPriceCents,
+        }
+      : {
+          id: itemId,
+          vendor: vendor,
+          name: `${vendor} Infrastructure Item`,
+          unitPriceCents: defaultUnitPrice,
+          category: "Custom",
+          inStock: true,
+          description: `Directly quoted procurement line item for ${vendor}`,
+        };
+
+    const totalAmountCents = overrideAmountCents !== undefined && overrideAmountCents > 0
+      ? overrideAmountCents
+      : item.unitPriceCents * quantity;
+
+    const vendorClean = vendor || item.vendor;
+    const vendorPrefix = vendorClean.replace(/[^a-zA-Z0-9]/g, "").slice(0, 4).toUpperCase() || "VND";
+    const quoteId = `QUOTE-${vendorPrefix}-${Date.now().toString().slice(-6)}`;
     const nonce = crypto.randomBytes(16).toString("hex");
 
     // Vendor cryptographic signature over quote terms
-    const signaturePayload = `${quoteId}:${vendor}:${totalAmountCents}:${nonce}`;
+    const signaturePayload = `${quoteId}:${vendorClean}:${totalAmountCents}:${nonce}`;
     const vendorSignature = `sig_${crypto.createHash("sha256").update(signaturePayload).digest("hex").slice(0, 32)}`;
 
     return {
       quoteId,
-      vendor: item.vendor || vendor,
+      vendor: vendorClean,
       items: [
         {
           itemId: item.id,
