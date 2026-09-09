@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { VaultPayAgent, DEFAULT_AUTHORIZED_VC } from "@/agent/agent";
 
+// Live Google Gemini Flash Neural Procurement Brain Route
 export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
