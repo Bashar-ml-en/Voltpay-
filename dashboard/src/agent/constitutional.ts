@@ -65,29 +65,38 @@ export class ConstitutionalGuard {
   }
 
   /**
-   * CG-2: Analyze quote metadata and memo fields for adversarial prompt injection
+   * CG-2: Analyze directive, quote metadata, and memo fields for adversarial prompt injection
    */
   static evaluatePromptInjectionFence(
-    quote: VendorQuote
+    quote: VendorQuote,
+    userPrompt?: string
   ): { passed: boolean; reason: string; detectedInjection?: string } {
     const injectionPatterns = [
       /ignore\s+(all\s+)?(previous\s+)?instructions/i,
       /system\s+override/i,
       /override\s+dispatch/i,
-      /reroute\s+(funds|payment)\s+to/i,
-      /0x[a-fA-F0-9]{40}/, // suspicious Ethereum address injection
+      /reroute\s+(funds|payment|money|urgent)\s+to/i,
+      /redirect\s+(funds|payment|money|urgent)\s+to/i,
+      /0x[a-fA-F0-9]{20,}/i,
+      /0xhacker/i,
+      /external\s+escrow/i,
       /transfer\s+\$?[0-9,]+\s+to/i,
       /urgent\s+security\s+update/i,
+      /bypass\s+detected/i,
+      /emergency\s+bypass/i,
+      /disregard\s+(all\s+)?(previous\s+)?/i,
+      /jailbreak/i,
+      /prompt\s+inject/i,
     ];
 
-    const inspectText = `${quote.memo || ""} ${quote.items.map((i) => i.name).join(" ")}`;
+    const inspectText = `${userPrompt || ""} ${quote.memo || ""} ${quote.vendor || ""} ${quote.items.map((i) => i.name).join(" ")}`;
 
     for (const pattern of injectionPatterns) {
       const match = inspectText.match(pattern);
       if (match) {
         return {
           passed: false,
-          reason: `Adversarial prompt injection pattern detected in vendor invoice: "${match[0]}"`,
+          reason: `Adversarial prompt injection pattern detected: "${match[0]}"`,
           detectedInjection: match[0],
         };
       }
@@ -95,7 +104,7 @@ export class ConstitutionalGuard {
 
     return {
       passed: true,
-      reason: "Invoice passed semantic fence check. No prompt injection patterns detected.",
+      reason: "Directive and invoice passed semantic fence check. No prompt injection patterns detected.",
     };
   }
 }

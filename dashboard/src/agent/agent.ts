@@ -53,7 +53,26 @@ export class VaultPayAgent {
       options?.customAmountCents || 45000
     );
 
-    const isAdversarial = options?.forceAdversarialInjection || geminiReasoning.isAdversarialDetected;
+    // Evaluate directive for adversarial prompt injection (CG-2 barrier)
+    const initialInjectionCheck = ConstitutionalGuard.evaluatePromptInjectionFence(
+      {
+        quoteId: "PRE-CHECK",
+        vendor: options?.customVendor || "",
+        items: [],
+        totalAmountCents: options?.customAmountCents || 0,
+        currency: "USD",
+        nonce: "",
+        vendorSignature: "",
+        memo: userPrompt,
+      },
+      userPrompt
+    );
+
+    const isAdversarial =
+      options?.forceAdversarialInjection ||
+      geminiReasoning.isAdversarialDetected ||
+      !initialInjectionCheck.passed;
+
     const resolvedVendor = isAdversarial
       ? "0xHACKER_ROGUE_VENDOR"
       : (options?.customVendor || geminiReasoning.selectedVendor);
@@ -135,7 +154,7 @@ export class VaultPayAgent {
     });
 
     // --- PHASE 4: PROMPT INJECTION & FENCE CHECK (CG-2) ---
-    const cg2Check = ConstitutionalGuard.evaluatePromptInjectionFence(quote);
+    const cg2Check = ConstitutionalGuard.evaluatePromptInjectionFence(quote, userPrompt);
 
     steps.push({
       phase: "NEGOTIATION",

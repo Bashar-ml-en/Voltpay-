@@ -232,9 +232,13 @@ export default function Dashboard() {
 
     if (scenarioId === "CUSTOM") {
       prompt = customPrompt || "Custom procurement order";
-      amountCents = Math.round((customAmountInput || 100) * 100);
-      vendor = customVendorInput || "CloudForge";
-      isAttack = false;
+      const isDetectedAttack =
+        /system\s+override|override\s+dispatch|ignore.*instructions|reroute.*(payment|funds|money)|redirect.*(payment|funds|money)|0x|hacker|escrow|bypass|jailbreak|disregard|prompt\s+inject/i.test(
+          prompt
+        );
+      isAttack = isDetectedAttack;
+      amountCents = isAttack ? 450000 : Math.round((customAmountInput || 450) * 100);
+      vendor = isAttack ? "0xHACKER_ROGUE_VENDOR" : (customVendorInput || "CloudForge");
     } else {
       const preset = PRESET_SCENARIOS.find((s) => s.id === scenarioId)!;
       prompt = preset.directive;
@@ -358,6 +362,34 @@ export default function Dashboard() {
     : 0;
 
   const currentPreset = PRESET_SCENARIOS.find((s) => s.id === selectedScenario);
+
+  const isCustomAttack =
+    selectedScenario === "CUSTOM" &&
+    /system\s+override|override\s+dispatch|ignore.*instructions|reroute.*(payment|funds|money)|redirect.*(payment|funds|money)|0x|hacker|escrow|bypass|jailbreak|disregard|prompt\s+inject/i.test(
+      customPrompt
+    );
+
+  const displayDirective =
+    selectedScenario === "CUSTOM"
+      ? customPrompt || "Enter a custom directive below..."
+      : currentPreset?.directive || "";
+
+  const displayVendor =
+    selectedScenario === "CUSTOM"
+      ? (isCustomAttack ? "0xHACKER_ROGUE_VENDOR" : (customVendorInput || "CloudForge"))
+      : currentPreset?.vendor || "";
+
+  const displayAmountCents =
+    selectedScenario === "CUSTOM"
+      ? (isCustomAttack ? 450000 : (customAmountInput ? Math.round(customAmountInput * 100) : 45000))
+      : currentPreset?.amountCents || 0;
+
+  const displayTargetPolicy =
+    selectedScenario === "CUSTOM"
+      ? (isCustomAttack
+          ? "Tests CG-2 Injection Fence & CG-3 TEE Allowlist Barrier (Expect: Blocked)"
+          : "Dynamic evaluation via Google Gemini Flash & T3 Enclave")
+      : currentPreset?.targetPolicy || "";
 
   return (
     <div className="min-h-screen bg-[#070913] text-[#E2E8F0] font-sans antialiased selection:bg-cyan-500/20 selection:text-cyan-300 relative overflow-x-hidden">
@@ -701,17 +733,17 @@ export default function Dashboard() {
                     <Fingerprint className="h-3.5 w-3.5" />
                     <span>OPERATOR DIRECTIVE:</span>
                   </span>
-                  <span className="text-slate-400">{currentPreset?.targetPolicy}</span>
+                  <span className="text-slate-400">{displayTargetPolicy}</span>
                 </div>
 
                 <div className="text-xs text-slate-200 font-mono bg-slate-900/80 p-3 rounded-lg border border-slate-800/90 leading-relaxed group-hover/directive:border-cyan-500/30 transition-colors shadow-sm">
-                  &quot;{currentPreset?.directive}&quot;
+                  &quot;{displayDirective}&quot;
                 </div>
 
                 <div className="flex items-center justify-between gap-3 pt-1">
                   <div className="text-[11px] font-mono text-slate-400">
-                    Vendor: <span className="text-white font-bold">{currentPreset?.vendor}</span> | Amount:{" "}
-                    <span className="text-white font-bold">${((currentPreset?.amountCents || 0) / 100).toFixed(2)}</span>
+                    Vendor: <span className="text-white font-bold">{displayVendor}</span> | Amount:{" "}
+                    <span className="text-white font-bold">${(displayAmountCents / 100).toFixed(2)}</span>
                   </div>
 
                   <button
@@ -740,7 +772,18 @@ export default function Dashboard() {
                 <input
                   type="text"
                   value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
+                  onChange={(e) => {
+                    setCustomPrompt(e.target.value);
+                    if (selectedScenario !== "CUSTOM") {
+                      setSelectedScenario("CUSTOM");
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && customPrompt && !isLoading) {
+                      setSelectedScenario("CUSTOM");
+                      handleExecuteScenario("CUSTOM");
+                    }
+                  }}
                   placeholder="Or type custom directive (e.g. Order 50 compute hours from CloudForge for $225)"
                   className="flex-1 bg-slate-900/80 border border-slate-800 rounded-xl px-3 py-1.5 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition"
                 />
