@@ -505,26 +505,26 @@ export default function Dashboard() {
         {/* ========================================================================= */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Card 1: Available Procurement Budget */}
-          <div className="rounded-2xl border border-slate-800/90 bg-[#0B0F1C]/90 p-4 lg:p-5 shadow-xl relative overflow-hidden group hover:border-cyan-500/40 transition">
+          <div className="interactive-card rounded-2xl border border-slate-800/90 bg-[#0B0F1C]/90 p-4 lg:p-5 shadow-xl relative overflow-hidden group hover:border-cyan-400/60 cursor-default before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:via-cyan-400 before:to-transparent before:opacity-0 group-hover:before:opacity-100 before:transition-opacity before:duration-500 after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/[0.04] after:to-transparent after:-translate-x-full group-hover:after:translate-x-full after:transition-transform after:duration-1000 after:pointer-events-none">
             <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
               <span className="uppercase tracking-wider font-bold text-slate-300 flex items-center gap-1.5">
-                <Database className="h-3.5 w-3.5 text-cyan-400" />
+                <Database className="h-3.5 w-3.5 text-cyan-400 group-hover:scale-110 group-hover:text-cyan-300 transition-transform duration-300" />
                 Available Session Budget
               </span>
-              <span className="px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 font-mono text-[11px] font-bold">
+              <span className="px-2 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-800/60 font-mono text-[11px] font-bold group-hover:shadow-[0_0_10px_rgba(115,193,225,0.3)] transition-shadow">
                 {budgetPercentage}% Remaining
               </span>
             </div>
             <div className="mt-2.5 flex items-baseline gap-2">
-              <span className="text-3xl font-black tracking-tight text-white font-mono">
+              <span className="text-3xl font-black tracking-tight text-white font-mono group-hover:text-cyan-100 transition-colors">
                 ${remainingBudget.toFixed(2)}
               </span>
               <span className="text-xs text-slate-400 font-mono">/ ${totalBudget.toFixed(2)}</span>
             </div>
             {/* Progress bar */}
-            <div className="mt-2.5 w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+            <div className="mt-2.5 w-full h-2 bg-slate-800/90 rounded-full overflow-hidden relative shadow-inner">
               <div
-                className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-400 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-cyan-500 via-blue-500 to-emerald-400 rounded-full transition-all duration-700 shadow-[0_0_10px_rgba(56,189,248,0.5)]"
                 style={{ width: `${budgetPercentage}%` }}
               />
             </div>
@@ -536,7 +536,7 @@ export default function Dashboard() {
             {/* Terminal 3 Network Gas Credits */}
             <div className="mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono text-slate-400">
               <span className="flex items-center gap-1 text-amber-400 font-medium">
-                <Zap className="h-3 w-3" />
+                <Zap className="h-3 w-3 group-hover:scale-110 transition-transform duration-300" />
                 T3 Gas Credits:
               </span>
               <span className="font-bold text-slate-200">
@@ -546,48 +546,48 @@ export default function Dashboard() {
           </div>
 
           {/* Card 2: Hard Hardware Limit */}
-          <div className="rounded-2xl border border-slate-800/90 bg-[#0B0F1C]/90 p-4 lg:p-5 shadow-xl relative overflow-hidden group hover:border-cyan-500/40 transition flex flex-col justify-between">
+          <div className="interactive-card rounded-2xl border border-slate-800/90 bg-[#0B0F1C]/90 p-4 lg:p-5 shadow-xl relative overflow-hidden group hover:border-emerald-400/60 cursor-default flex flex-col justify-between before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:via-emerald-400 before:to-transparent before:opacity-0 group-hover:before:opacity-100 before:transition-opacity before:duration-500 after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/[0.04] after:to-transparent after:-translate-x-full group-hover:after:translate-x-full after:transition-transform after:duration-1000 after:pointer-events-none">
             <div>
               <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
                 <span className="uppercase tracking-wider font-bold text-slate-300 flex items-center gap-1.5">
-                  <Lock className="h-3.5 w-3.5 text-cyan-400" />
+                  <Lock className="h-3.5 w-3.5 text-cyan-400 group-hover:scale-110 group-hover:text-emerald-300 transition-transform duration-300" />
                   Hardware Enclave Limit
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700 font-mono text-[11px] flex items-center gap-1 font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-slate-800/90 text-slate-300 border border-slate-700 font-mono text-[11px] flex items-center gap-1 font-bold group-hover:border-emerald-500/40 transition-colors">
                   <Lock className="h-3 w-3 text-cyan-400" /> Firmware Locked
                 </span>
               </div>
               <div className="mt-2.5 flex items-baseline gap-2">
-                <span className="text-3xl font-black tracking-tight text-white font-mono">
+                <span className="text-3xl font-black tracking-tight text-white font-mono group-hover:text-emerald-100 transition-colors">
                   $1,000.00
                 </span>
                 <span className="text-xs text-slate-400 font-mono">/ Per-Call Cap</span>
               </div>
               <div className="mt-2.5 text-xs text-emerald-400 font-mono flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 shrink-0 shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                <span className="h-2 w-2 rounded-full bg-emerald-400 shrink-0 shadow-[0_0_10px_rgba(52,211,153,0.9)] animate-pulse" />
                 <span className="tracking-wide">Firmware-Enforced SGX Boundary</span>
               </div>
             </div>
             <div className="mt-2 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 font-mono">
               <span>Rule: Deterministic Halt</span>
-              <span className="text-cyan-400 font-bold">MRENCLAVE ACTIVE</span>
+              <span className="text-cyan-400 font-bold tracking-wider">MRENCLAVE ACTIVE</span>
             </div>
           </div>
 
           {/* Card 3: Threat Interceptions */}
-          <div className="rounded-2xl border border-slate-800/90 bg-[#0B0F1C]/90 p-4 lg:p-5 shadow-xl relative overflow-hidden group hover:border-red-500/40 transition flex flex-col justify-between">
+          <div className="interactive-card rounded-2xl border border-slate-800/90 bg-[#0B0F1C]/90 p-4 lg:p-5 shadow-xl relative overflow-hidden group hover:border-red-500/60 cursor-default flex flex-col justify-between before:absolute before:top-0 before:left-0 before:right-0 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:via-rose-500 before:to-transparent before:opacity-0 group-hover:before:opacity-100 before:transition-opacity before:duration-500 after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/[0.04] after:to-transparent after:-translate-x-full group-hover:after:translate-x-full after:transition-transform after:duration-1000 after:pointer-events-none">
             <div>
               <div className="flex items-center justify-between text-xs text-slate-400 font-medium">
                 <span className="uppercase tracking-wider font-bold text-slate-300 flex items-center gap-1.5">
-                  <ShieldCheck className="h-3.5 w-3.5 text-red-400" />
+                  <ShieldCheck className="h-3.5 w-3.5 text-red-400 group-hover:scale-110 group-hover:text-rose-300 transition-transform duration-300" />
                   Threat Defense Matrix
                 </span>
-                <span className="px-2 py-0.5 rounded-full bg-red-950/80 text-red-300 border border-red-800/60 font-mono text-[11px] font-bold">
+                <span className="px-2 py-0.5 rounded-full bg-red-950/80 text-red-300 border border-red-800/60 font-mono text-[11px] font-bold group-hover:shadow-[0_0_10px_rgba(244,63,94,0.3)] transition-shadow">
                   Protected
                 </span>
               </div>
               <div className="mt-2.5 flex items-baseline gap-2">
-                <span className="text-3xl font-black tracking-tight text-red-400 font-mono">
+                <span className="text-3xl font-black tracking-tight text-red-400 font-mono inline-block group-hover:scale-105 origin-left transition-transform">
                   {threatInterceptions}
                 </span>
                 <span className="text-xs text-slate-400 font-mono">Attacks Neutralized</span>
@@ -613,22 +613,49 @@ export default function Dashboard() {
           {/* ----------------------------------------------------------------------- */}
           <div className="lg:col-span-7 space-y-4">
             {/* Directive Control Console */}
-            <div className="rounded-2xl border border-slate-800/90 bg-[#0A0E1B]/95 p-5 shadow-2xl relative">
+            <div className="rounded-2xl border border-slate-800/90 bg-[#0A0E1B]/95 p-5 shadow-2xl relative group/console hover:border-slate-700/80 transition-colors duration-300">
               <div className="flex items-center justify-between mb-3">
                 <h2 className="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
                   <Sliders className="h-4 w-4 text-cyan-400" />
                   <span>Autonomous Directive Selector</span>
                 </h2>
-                <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/60">
+                <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/60 shadow-sm">
                   Select Scenario & Dispatch
                 </span>
               </div>
 
               {/* 4 Quick-Action Preset Chips */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-3.5">
                 {PRESET_SCENARIOS.map((preset) => {
                   const isSelected = selectedScenario === preset.id;
                   const Icon = preset.icon;
+                  
+                  // Category specific active/hover accent styles
+                  const styleMap: Record<ScenarioType, { active: string; hover: string }> = {
+                    HAPPY_PATH: {
+                      active: "bg-slate-900/95 border-emerald-400 shadow-[0_0_18px_rgba(52,211,153,0.3)] ring-1 ring-emerald-400/50 scale-[1.02]",
+                      hover: "hover:border-emerald-500/40 hover:bg-slate-900/60 hover:shadow-emerald-950/20",
+                    },
+                    PROMPT_INJECTION: {
+                      active: "bg-slate-900/95 border-rose-500 shadow-[0_0_18px_rgba(244,63,94,0.35)] ring-1 ring-rose-400/50 scale-[1.02]",
+                      hover: "hover:border-rose-500/40 hover:bg-slate-900/60 hover:shadow-rose-950/20",
+                    },
+                    CAP_OVERFLOW: {
+                      active: "bg-slate-900/95 border-amber-400 shadow-[0_0_18px_rgba(245,158,11,0.35)] ring-1 ring-amber-400/50 scale-[1.02]",
+                      hover: "hover:border-amber-500/40 hover:bg-slate-900/60 hover:shadow-amber-950/20",
+                    },
+                    UNTRUSTED_VENDOR: {
+                      active: "bg-slate-900/95 border-purple-400 shadow-[0_0_18px_rgba(168,85,247,0.35)] ring-1 ring-purple-400/50 scale-[1.02]",
+                      hover: "hover:border-purple-500/40 hover:bg-slate-900/60 hover:shadow-purple-950/20",
+                    },
+                    CUSTOM: {
+                      active: "bg-slate-900/95 border-cyan-400 shadow-[0_0_18px_rgba(115,193,225,0.3)] ring-1 ring-cyan-400/50 scale-[1.02]",
+                      hover: "hover:border-cyan-500/40 hover:bg-slate-900/60",
+                    },
+                  };
+
+                  const currentStyle = styleMap[preset.id] || styleMap.HAPPY_PATH;
+
                   return (
                     <button
                       key={preset.id}
@@ -637,21 +664,24 @@ export default function Dashboard() {
                         setLiveSteps(null);
                         setLastVerdict(null);
                       }}
-                      className={`p-2.5 rounded-xl border text-left transition flex flex-col justify-between ${
+                      className={`interactive-chip p-3 rounded-xl border text-left flex flex-col justify-between relative overflow-hidden group cursor-pointer ${
                         isSelected
-                          ? "bg-slate-900 border-cyan-400/80 shadow-[0_0_12px_rgba(115,193,225,0.25)] ring-1 ring-cyan-400/40"
-                          : "bg-[#0B0F1C]/80 border-slate-800 hover:border-slate-700 hover:bg-slate-900/50"
+                          ? currentStyle.active
+                          : `bg-[#0B0F1C]/85 border-slate-800/90 ${currentStyle.hover} hover:shadow-md`
                       }`}
                     >
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${preset.badgeColor}`}>
+                      <div className="flex items-center justify-between mb-2">
+                        <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border transition-all duration-200 group-hover:scale-105 ${preset.badgeColor}`}>
                           {preset.badge}
                         </span>
-                        <Icon className={`h-3.5 w-3.5 ${isSelected ? "text-cyan-400" : "text-slate-500"}`} />
+                        <Icon className={`h-4 w-4 transition-transform duration-300 group-hover:scale-125 ${isSelected ? "text-cyan-300" : "text-slate-500 group-hover:text-slate-300"}`} />
                       </div>
-                      <div className="text-xs font-bold text-slate-200 truncate">{preset.title}</div>
-                      <div className="text-[10px] font-mono text-slate-400 mt-1">
-                        ${(preset.amountCents / 100).toFixed(2)}
+                      <div className="text-xs font-bold text-slate-200 truncate group-hover:text-white transition-colors">{preset.title}</div>
+                      <div className="text-[10px] font-mono text-slate-400 mt-1.5 flex items-center justify-between">
+                        <span>${(preset.amountCents / 100).toFixed(2)}</span>
+                        {isSelected && (
+                          <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-ping" />
+                        )}
                       </div>
                     </button>
                   );
@@ -659,7 +689,7 @@ export default function Dashboard() {
               </div>
 
               {/* Active Directive Input & Dispatch CTA */}
-              <div className="space-y-3 bg-[#070A14] p-3.5 rounded-xl border border-slate-800">
+              <div className="space-y-3.5 bg-[#070A14] p-4 rounded-xl border border-slate-800/90 group/directive hover:border-slate-700 transition-all duration-300 shadow-inner">
                 <div className="flex items-center justify-between text-[11px] font-mono">
                   <span className="text-cyan-400 font-bold flex items-center gap-1.5">
                     <Fingerprint className="h-3.5 w-3.5" />
@@ -668,7 +698,7 @@ export default function Dashboard() {
                   <span className="text-slate-400">{currentPreset?.targetPolicy}</span>
                 </div>
 
-                <div className="text-xs text-slate-200 font-mono bg-slate-900/70 p-2.5 rounded-lg border border-slate-800/80 leading-relaxed">
+                <div className="text-xs text-slate-200 font-mono bg-slate-900/80 p-3 rounded-lg border border-slate-800/90 leading-relaxed group-hover/directive:border-cyan-500/30 transition-colors shadow-sm">
                   &quot;{currentPreset?.directive}&quot;
                 </div>
 
@@ -681,8 +711,9 @@ export default function Dashboard() {
                   <button
                     onClick={() => handleExecuteScenario()}
                     disabled={isLoading}
-                    className="px-5 py-2 rounded-xl font-mono font-bold text-xs flex items-center gap-2 transition shadow-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 shadow-cyan-500/20 disabled:opacity-50 cursor-pointer shrink-0"
+                    className="px-6 py-2.5 rounded-xl font-mono font-bold text-xs flex items-center gap-2 transition-all duration-300 shadow-lg bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-600 hover:from-cyan-300 hover:via-sky-400 hover:to-blue-500 text-slate-950 shadow-cyan-500/25 hover:shadow-[0_0_25px_rgba(56,189,248,0.55)] hover:scale-[1.03] active:scale-[0.97] disabled:opacity-50 disabled:scale-100 disabled:shadow-none cursor-pointer shrink-0 relative overflow-hidden group/btn"
                   >
+                    <span className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700 ease-out" />
                     {isLoading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin text-slate-950" />
@@ -690,7 +721,7 @@ export default function Dashboard() {
                       </>
                     ) : (
                       <>
-                        <Zap className="h-4 w-4 fill-current" />
+                        <Zap className="h-4 w-4 fill-current group-hover/btn:rotate-12 transition-transform duration-300" />
                         <span>DISPATCH AUTONOMOUS AGENT</span>
                       </>
                     )}
@@ -1016,10 +1047,10 @@ export default function Dashboard() {
           {/* ----------------------------------------------------------------------- */}
           <div className="lg:col-span-5 space-y-4">
             {/* Real Tamper-Evident SHA-256 Ledger */}
-            <div className="rounded-2xl border border-slate-800/90 bg-[#0A0E1B]/95 p-5 shadow-2xl relative">
+            <div className="interactive-card rounded-2xl border border-slate-800/90 bg-[#0A0E1B]/95 p-5 shadow-2xl relative group/ledger hover:border-emerald-500/40 cursor-default">
               <div className="flex items-center justify-between mb-3 border-b border-slate-800/80 pb-2.5">
                 <div className="flex items-center gap-2">
-                  <Database className="h-4 w-4 text-emerald-400" />
+                  <Database className="h-4 w-4 text-emerald-400 group-hover/ledger:scale-110 group-hover/ledger:text-emerald-300 transition-transform duration-300" />
                   <h3 className="text-xs font-bold text-white uppercase tracking-wider">
                     Immutable SHA-256 Ledger
                   </h3>
@@ -1090,10 +1121,10 @@ export default function Dashboard() {
             </div>
 
             {/* Hardware Profile Specification */}
-            <div className="rounded-2xl border border-slate-800/90 bg-[#0A0E1B]/95 p-4 shadow-xl text-xs font-mono space-y-2">
+            <div className="interactive-card rounded-2xl border border-slate-800/90 bg-[#0A0E1B]/95 p-4 shadow-xl text-xs font-mono space-y-2 group/specs hover:border-cyan-500/40 cursor-default">
               <div className="flex items-center justify-between border-b border-slate-800/80 pb-2">
                 <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                  <Shield className="h-3.5 w-3.5 text-cyan-400" />
+                  <Shield className="h-3.5 w-3.5 text-cyan-400 group-hover/specs:scale-110 group-hover/specs:text-cyan-300 transition-transform duration-300" />
                   Hardware Security Standard
                 </span>
                 <span className="text-[10px] text-emerald-400 font-bold">INTEL SGX MRENCLAVE</span>

@@ -18,16 +18,87 @@ body {
 @keyframes pulse-glow {
   0%, 100% {
     opacity: 1;
-    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 18px rgba(115, 193, 225, 0.45);
   }
   50% {
+    opacity: 0.85;
+    box-shadow: 0 0 6px rgba(115, 193, 225, 0.2);
+  }
+}
+
+@keyframes card-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+@keyframes soft-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-2.5px);
+  }
+}
+
+@keyframes radar-pulse {
+  0% {
+    transform: scale(0.95);
     opacity: 0.8;
-    box-shadow: 0 0 5px rgba(56, 189, 248, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
   }
 }
 
 .glow-enclave {
   animation: pulse-glow 3s infinite ease-in-out;
+}
+
+.animate-soft-float {
+  animation: soft-float 4s ease-in-out infinite;
+}
+
+.animate-radar {
+  animation: radar-pulse 2s ease-in-out infinite;
+}
+
+/* Hardware-accelerated interactive card classes */
+.interactive-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.25s ease, 
+              box-shadow 0.25s ease, 
+              background-color 0.25s ease;
+  will-change: transform, box-shadow;
+}
+
+.interactive-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.7), 0 0 20px -4px rgba(115, 193, 225, 0.18);
+}
+
+.interactive-chip {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.2s ease, 
+              box-shadow 0.2s ease, 
+              background-color 0.2s ease;
+  will-change: transform;
+}
+
+.interactive-chip:hover {
+  transform: translateY(-2px) scale(1.015);
+}
+
+.interactive-chip:active {
+  transform: translateY(0px) scale(0.985);
 }
 
 /* Custom scrollbars */
