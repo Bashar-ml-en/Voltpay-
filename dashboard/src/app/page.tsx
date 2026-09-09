@@ -619,9 +619,15 @@ export default function Dashboard() {
                   <Sliders className="h-4 w-4 text-cyan-400" />
                   <span>Autonomous Directive Selector</span>
                 </h2>
-                <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/60 shadow-sm">
-                  Select Scenario & Dispatch
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-purple-300 bg-purple-950/60 px-2.5 py-0.5 rounded-full border border-purple-800/60 shadow-sm">
+                    <span className="h-1.5 w-1.5 rounded-full bg-purple-400 animate-pulse" />
+                    <span>Brain: Google Gemini Flash</span>
+                  </span>
+                  <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/60 px-2 py-0.5 rounded border border-cyan-800/60 shadow-sm">
+                    Select Scenario & Dispatch
+                  </span>
+                </div>
               </div>
 
               {/* 4 Quick-Action Preset Chips */}

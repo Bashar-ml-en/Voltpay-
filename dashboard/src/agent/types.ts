@@ -112,4 +112,6 @@ export interface AgentResponse {
   finalReply: string;
   steps: AgentStep[];
   enclaveResult?: PayVendorResult;
+  modelUsed?: string;
+  geminiThought?: string;
 }
