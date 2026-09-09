@@ -416,17 +416,7 @@ export default function Dashboard() {
                   </span>
                 </h1>
 
-                {/* Live Deployment Link */}
-                <a
-                  href="https://vaultpay-ai.vercel.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[11px] font-mono font-medium text-[#73C1E1] hover:text-white bg-[#0F172A] hover:bg-[#1E293B] px-2.5 py-0.5 rounded-full border border-[#73C1E1]/40 transition shadow-sm"
-                >
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#73C1E1] animate-pulse" />
-                  <span>vaultpay-ai.vercel.app</span>
-                  <ExternalLink className="h-2.5 w-2.5 opacity-70" />
-                </a>
+
 
                 {/* Direct Link to Terminal 3 Cloud Console */}
                 <a
