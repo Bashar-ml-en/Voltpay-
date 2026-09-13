@@ -108,10 +108,19 @@ export interface AgentStep {
   };
 }
 
+export type AgentIntent =
+  | "CONVERSATION"
+  | "CATALOG_QUERY"
+  | "TELEMETRY_QUERY"
+  | "PROCUREMENT_DIRECTIVE"
+  | "ADVERSARIAL_ATTACK";
+
 export interface AgentResponse {
   finalReply: string;
+  intent?: AgentIntent;
   steps: AgentStep[];
   enclaveResult?: PayVendorResult;
+  catalogItems?: CatalogItem[];
   modelUsed?: string;
   geminiThought?: string;
 }

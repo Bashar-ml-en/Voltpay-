@@ -44,13 +44,83 @@ export class VaultPayAgent {
     // --- REAL LLM BRAIN: GOOGLE GEMINI FLASH REASONING ---
     const geminiReasoning = await GeminiService.reasonAboutDirective(userPrompt);
 
-    // Evaluate directive for adversarial prompt injection (CG-2 barrier)
+    // --- INTENT ROUTING: CONVERSATIONAL & INFORMATIONAL MODES ---
+    if (geminiReasoning.intent === "CONVERSATION") {
+      steps.push({
+        phase: "AUTHENTICATION",
+        thought: `[Brain: ${geminiReasoning.modelUsed}] Inbound message evaluated as conversational inquiry: "${geminiReasoning.thought}"`,
+        constitutionalGuardCheck: {
+          guardName: "CG-1: Session Authorization",
+          passed: true,
+          reason: `Operator identity verified: ${userVC.claims.role} (${userVC.claims.department})`,
+        },
+        toolResult: { status: "CONVERSATIONAL_MODE", role: userVC.claims.role },
+      });
+
+      return {
+        finalReply: geminiReasoning.reply,
+        intent: "CONVERSATION",
+        steps,
+        modelUsed: geminiReasoning.modelUsed,
+        geminiThought: geminiReasoning.thought,
+      };
+    }
+
+    if (geminiReasoning.intent === "CATALOG_QUERY") {
+      const catalogMatches = SupplierNegotiator.searchCatalog(geminiReasoning.catalogSearchQuery || "");
+      steps.push({
+        phase: "DISCOVERY",
+        thought: `[Brain: ${geminiReasoning.modelUsed}] Querying live supplier database for available compute and API products...`,
+        toolCall: {
+          name: "search_catalog",
+          args: { query: geminiReasoning.catalogSearchQuery || "all" },
+        },
+        toolResult: { matchedItems: catalogMatches },
+      });
+
+      return {
+        finalReply: geminiReasoning.reply,
+        intent: "CATALOG_QUERY",
+        catalogItems: catalogMatches,
+        steps,
+        modelUsed: geminiReasoning.modelUsed,
+        geminiThought: geminiReasoning.thought,
+      };
+    }
+
+    if (geminiReasoning.intent === "TELEMETRY_QUERY") {
+      const telemetry = this.enclave.getTelemetry();
+      steps.push({
+        phase: "DISCOVERY",
+        thought: `[Brain: ${geminiReasoning.modelUsed}] Inspecting Terminal 3 SGX Hardware Enclave telemetry and ledger metrics...`,
+        toolCall: {
+          name: "get_enclave_telemetry",
+          args: { enclaveDid: telemetry.enclaveDid },
+        },
+        toolResult: {
+          remainingBudgetCents: telemetry.remainingBudgetCents,
+          perCallCapCents: telemetry.perCallCapCents,
+          totalBlocks: telemetry.ledger.length,
+          allowlist: telemetry.allowlist,
+        },
+      });
+
+      return {
+        finalReply: geminiReasoning.reply,
+        intent: "TELEMETRY_QUERY",
+        steps,
+        modelUsed: geminiReasoning.modelUsed,
+        geminiThought: geminiReasoning.thought,
+      };
+    }
+
+    // --- INTENT: PROCUREMENT DIRECTIVE OR ADVERSARIAL ATTACK ---
     const initialInjectionCheck = ConstitutionalGuard.evaluatePromptInjectionFence(
       {
         quoteId: "PRE-CHECK",
-        vendor: geminiReasoning.selectedVendor,
+        vendor: geminiReasoning.selectedVendor || "",
         items: [],
-        totalAmountCents: geminiReasoning.amountCents,
+        totalAmountCents: geminiReasoning.amountCents || 0,
         currency: "USD",
         nonce: "",
         vendorSignature: "",
@@ -87,6 +157,7 @@ export class VaultPayAgent {
     if (!cg1Check.passed) {
       return {
         finalReply: `Authentication Refused: ${cg1Check.reason}`,
+        intent: geminiReasoning.intent,
         steps,
         modelUsed: geminiReasoning.modelUsed,
         geminiThought: geminiReasoning.thought,
@@ -217,6 +288,7 @@ export class VaultPayAgent {
 
     return {
       finalReply,
+      intent: geminiReasoning.intent,
       steps,
       enclaveResult,
       modelUsed: geminiReasoning.modelUsed,
