@@ -3,6 +3,7 @@ import { VaultPayAgent, DEFAULT_AUTHORIZED_VC } from "@/agent/agent";
 
 // Live Google Gemini Flash Neural Procurement Brain Route
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
