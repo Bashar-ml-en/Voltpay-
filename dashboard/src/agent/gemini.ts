@@ -128,13 +128,14 @@ export class GeminiService {
     const apiKey = this.getApiKey();
     if (!apiKey) return null;
 
-    const modelsToTry = ["gemini-3.6-flash", "gemini-3.8-flash", "gemini-flash-lite-latest"];
-    const steps: AgentStep[] = [];
-    let detectedIntent: AgentIntent = "CONVERSATION";
-    let matchedCatalogItems: CatalogItem[] = [];
-    let enclaveResult: PayVendorResult | undefined = undefined;
+    const modelsToTry = ["gemini-flash-lite-latest", "gemini-3.6-flash", "gemini-3.8-flash"];
 
     for (const model of modelsToTry) {
+      const steps: AgentStep[] = [];
+      let detectedIntent: AgentIntent = "CONVERSATION";
+      let matchedCatalogItems: CatalogItem[] = [];
+      let enclaveResult: PayVendorResult | undefined = undefined;
+
       try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
         const contents: any[] = [
