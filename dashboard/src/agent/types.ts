@@ -80,6 +80,14 @@ export interface TEEPolicyStatus {
   networkMode?: "LIVE_NETWORK" | "EMULATED_SGX";
   t3nCredits?: number;
   t3nAccountId?: string;
+  rpcUrl?: string;
+  lastLiveDispatch?: {
+    timestamp: number;
+    url: string;
+    status: "SUCCESS" | "FAILED" | "SKIPPED";
+    statusCode?: number;
+    error?: string;
+  };
 }
 
 export interface PayVendorResult {

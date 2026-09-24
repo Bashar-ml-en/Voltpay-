@@ -250,6 +250,26 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(false);
   const [copiedHash, setCopiedHash] = useState<string | null>(null);
   const [selectedBlock, setSelectedBlock] = useState<LedgerEntry | null>(null);
+  const [showT3Modal, setShowT3Modal] = useState(false);
+  const [t3Status, setT3Status] = useState<any>(null);
+  const [isCheckingT3, setIsCheckingT3] = useState(false);
+
+  const handleCheckT3Connection = async () => {
+    setIsCheckingT3(true);
+    try {
+      const res = await fetch("/api/t3n/status");
+      if (res.ok) {
+        const data = await res.json();
+        setT3Status(data);
+        addLog(`[T3_NETWORK] Status check: ${data.status} (Gateway latency: ${data.latencyMs ?? 'N/A'}ms)`);
+      }
+    } catch (e: any) {
+      console.error("T3 status check failed:", e);
+      addLog(`[T3_NETWORK] Status check exception: ${e?.message || e}`);
+    } finally {
+      setIsCheckingT3(false);
+    }
+  };
   const [showTerminalDrawer, setShowTerminalDrawer] = useState(false);
   const [terminalLogs, setTerminalLogs] = useState<string[]>([
     "Terminal 3 TEE Enclave initialized at hardware boot (Intel SGX active)",
@@ -465,10 +485,29 @@ export default function Dashboard() {
                 <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#1F2F4A]/80 text-[#73C1E1] border border-[#73C1E1]/40 shadow-sm">
                   v3.0 TEE
                 </span>
-                <span className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono text-[#a0a0a0] pl-2 border-l border-white/10">
-                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  <span className="text-slate-300">Intel SGX Enclave Active</span>
-                </span>
+                <button
+                  onClick={() => {
+                    setShowT3Modal(true);
+                    handleCheckT3Connection();
+                  }}
+                  title="Inspect Terminal 3 Network Connection"
+                  className="hidden sm:inline-flex items-center gap-1.5 text-[11px] font-mono pl-2 border-l border-white/10 hover:opacity-80 transition cursor-pointer"
+                >
+                  {telemetry?.networkMode === "LIVE_NETWORK" ? (
+                    <>
+                      <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.9)]" />
+                      <span className="text-cyan-300 font-bold">LIVE T3N NETWORK ({telemetry.t3nAccountId || 'Active'})</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse" />
+                      <span className="text-amber-300 font-medium">SGX Local Enclave</span>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-950/80 text-amber-200 border border-amber-800/60 font-mono font-bold">
+                        Inspect T3
+                      </span>
+                    </>
+                  )}
+                </button>
               </div>
               <span className="text-[10px] text-[#73C1E1]/80 font-mono tracking-wider hidden sm:block">
                 POWERED BY TERMINAL 3 & GOOGLE GEMINI FLASH
@@ -1069,20 +1108,26 @@ export default function Dashboard() {
 
                 <div className="grid grid-cols-2 gap-2.5 text-xs font-mono">
                   <div className="bg-[#121520] p-2.5 rounded-xl border border-white/5">
-                    <div className="text-slate-500 text-[10px]">ENCLAVE DID:</div>
-                    <div className="text-slate-300 font-bold truncate">did:t3n:enclave:sgx:...</div>
+                    <div className="text-slate-500 text-[10px]">NETWORK MODE:</div>
+                    <div className={`font-bold truncate text-[11px] ${telemetry?.networkMode === "LIVE_NETWORK" ? "text-cyan-400" : "text-amber-400"}`}>
+                      {telemetry?.networkMode === "LIVE_NETWORK" ? "LIVE T3N NETWORK" : "SGX LOCAL EMULATOR"}
+                    </div>
                   </div>
                   <div className="bg-[#121520] p-2.5 rounded-xl border border-white/5">
-                    <div className="text-slate-500 text-[10px]">SGX MRENCLAVE:</div>
-                    <div className="text-emerald-400 font-bold truncate">0x71e9c04a29bf8b65</div>
+                    <div className="text-slate-500 text-[10px]">T3 ACCOUNT ID:</div>
+                    <div className="text-slate-300 font-bold truncate text-[11px]">
+                      {telemetry?.t3nAccountId || "Local Deterministic"}
+                    </div>
+                  </div>
+                  <div className="bg-[#121520] p-2.5 rounded-xl border border-white/5">
+                    <div className="text-slate-500 text-[10px]">T3 GAS CREDITS:</div>
+                    <div className="text-amber-300 font-bold truncate text-[11px]">
+                      {telemetry?.t3nCredits ?? 20000} Credits
+                    </div>
                   </div>
                   <div className="bg-[#121520] p-2.5 rounded-xl border border-white/5">
                     <div className="text-slate-500 text-[10px]">FIRMWARE CAP:</div>
-                    <div className="text-white font-bold">$1,000.00 / call</div>
-                  </div>
-                  <div className="bg-[#121520] p-2.5 rounded-xl border border-white/5">
-                    <div className="text-slate-500 text-[10px]">MEMORY ENCRYPTION:</div>
-                    <div className="text-[#00F0FF] font-bold">AES-128-XTS</div>
+                    <div className="text-white font-bold text-[11px]">$1,000.00 / call</div>
                   </div>
                 </div>
 
@@ -1392,6 +1437,129 @@ export default function Dashboard() {
             >
               Close Inspector
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 8. TERMINAL 3 CONNECTION & CREDENTIALS INSPECTOR MODAL */}
+      {showT3Modal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in">
+          <div className="glass-panel-pro rounded-2xl max-w-xl w-full p-6 space-y-4 border border-[#73C1E1]/40 shadow-2xl relative">
+            <button
+              onClick={() => setShowT3Modal(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-white p-1 rounded-lg border border-white/10 hover:bg-white/5 cursor-pointer"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="flex items-center gap-3 border-b border-white/10 pb-4">
+              <div className="h-10 w-10 rounded-xl bg-[#0F172A] border border-[#73C1E1]/60 flex items-center justify-center text-[#73C1E1] shadow-[0_0_15px_rgba(115,193,225,0.4)]">
+                <Cpu className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <span>Terminal 3 Network (T3N) Live Gateway Inspector</span>
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Intel SGX Confidential Computing Enclave & Attestation Status
+                </p>
+              </div>
+            </div>
+
+            {/* Current Connection Status Box */}
+            <div className="p-4 rounded-xl bg-[#0d101a] border border-white/10 space-y-3 font-mono text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">OPERATIONAL MODE:</span>
+                <span className={`font-bold px-2 py-0.5 rounded-full text-[11px] ${
+                  telemetry?.networkMode === "LIVE_NETWORK"
+                    ? "bg-cyan-950 text-cyan-300 border border-cyan-800"
+                    : "bg-amber-950 text-amber-300 border border-amber-800"
+                }`}>
+                  {telemetry?.networkMode === "LIVE_NETWORK" ? "LIVE T3N NETWORK GATEWAY" : "LOCAL SGX EMULATOR (Deterministic)"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">RPC GATEWAY:</span>
+                <span className="text-slate-200">https://rpc.t3n.network</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">T3 ACCOUNT ID:</span>
+                <span className="text-[#73C1E1] font-bold">
+                  {telemetry?.t3nAccountId || "Not Configured (Running Local)"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400">AVAILABLE GAS CREDITS:</span>
+                <span className="text-amber-300 font-bold">{telemetry?.t3nCredits ?? 20000} Credits</span>
+              </div>
+
+              {t3Status && (
+                <div className="mt-2 pt-2 border-t border-white/10 text-[11px] space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">GATEWAY REACHABILITY:</span>
+                    <span className={t3Status.gatewayReachable ? "text-emerald-400 font-bold" : "text-amber-400"}>
+                      {t3Status.gatewayReachable ? `ONLINE (${t3Status.latencyMs}ms latency)` : "STANDBY / TIMEOUT"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">ENCLAVE ATTESTATION DID:</span>
+                    <span className="text-slate-300 truncate max-w-[240px]">{t3Status.enclaveDid}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Step-by-Step Live Connection Instructions */}
+            <div className="space-y-2 text-xs">
+              <div className="font-bold text-slate-200 flex items-center justify-between">
+                <span>How to Switch to Live Terminal 3 Network:</span>
+                <button
+                  onClick={handleCheckT3Connection}
+                  disabled={isCheckingT3}
+                  className="px-2.5 py-1 rounded bg-[#1A2234] hover:bg-[#243048] text-[#73C1E1] border border-[#73C1E1]/40 font-mono text-[10px] font-bold flex items-center gap-1 cursor-pointer"
+                >
+                  <RefreshCw className={`h-3 w-3 ${isCheckingT3 ? 'animate-spin' : ''}`} />
+                  <span>{isCheckingT3 ? "Pinging Gateway..." : "Ping T3 Gateway"}</span>
+                </button>
+              </div>
+
+              <ol className="list-decimal list-inside space-y-1.5 text-slate-400 font-mono text-[11px] leading-relaxed bg-[#0a0c14] p-3 rounded-xl border border-white/5">
+                <li>Register developer profile at <a href="https://go.terminal3.io" target="_blank" rel="noopener noreferrer" className="text-[#73C1E1] underline hover:text-white">go.terminal3.io</a> to claim 20,000 credits.</li>
+                <li>Obtain your <strong>Account ID</strong> and generate an <strong>API Key</strong> under Developer Settings.</li>
+                <li>Set the following environment variables in your <code className="text-amber-300">.env.local</code> or Vercel:</li>
+              </ol>
+
+              <div className="bg-[#05070c] p-3 rounded-xl border border-white/10 font-mono text-[11px] text-slate-300 overflow-x-auto space-y-0.5">
+                <div><span className="text-slate-500"># Set to 0 to enable live Terminal 3 RPC gateway</span></div>
+                <div><span className="text-[#73C1E1]">MOCK_T3N</span>=0</div>
+                <div><span className="text-[#73C1E1]">T3N_ACCOUNT_ID</span>=your_account_id_here</div>
+                <div><span className="text-[#73C1E1]">T3N_PRIVATE_API_KEY</span>=your_api_key_here</div>
+                <div><span className="text-[#73C1E1]">T3N_RPC_URL</span>=https://rpc.t3n.network</div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-2">
+              <a
+                href="https://go.terminal3.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-2 rounded-xl bg-gradient-to-r from-[#73C1E1] via-[#38BDF8] to-[#2563EB] text-slate-950 font-bold text-xs text-center shadow-lg transition hover:opacity-90 flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                <span>Open Terminal 3 Cloud Console</span>
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </a>
+
+              <button
+                onClick={() => setShowT3Modal(false)}
+                className="px-4 py-2 rounded-xl bg-[#141824] hover:bg-[#1E2538] text-slate-300 font-mono text-xs font-bold border border-white/10 cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
