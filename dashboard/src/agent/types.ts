@@ -131,4 +131,5 @@ export interface AgentResponse {
   catalogItems?: CatalogItem[];
   modelUsed?: string;
   geminiThought?: string;
+  telemetry?: TEEPolicyStatus;
 }

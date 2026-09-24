@@ -293,7 +293,14 @@ export default function Dashboard() {
       const res = await fetch("/api/telemetry");
       if (res.ok) {
         const data = await res.json();
-        setTelemetry(data);
+        setTelemetry((prev: any) => {
+          if (!prev) return data;
+          // Guard: if current client state has more ledger entries than incoming stale data, keep client state
+          if (prev.ledger && data.ledger && prev.ledger.length > data.ledger.length) {
+            return prev;
+          }
+          return data;
+        });
       }
     } catch (e) {
       console.error("Telemetry fetch error:", e);
@@ -365,6 +372,10 @@ export default function Dashboard() {
       };
 
       setMessages((prev) => [...prev, agentMsg]);
+
+      if (data.telemetry) {
+        setTelemetry(data.telemetry);
+      }
 
       if (data.enclaveResult) {
         const result = data.enclaveResult;

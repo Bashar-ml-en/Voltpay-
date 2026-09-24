@@ -1,87 +1,138 @@
 # VaultPay 🛡️💳
-### Autonomous B2B Procurement Agent with Terminal 3 TEE Hardware Guardrails
+### Autonomous B2B Procurement Agent with Terminal 3 Intel SGX Hardware Enclave Guardrails
 
-[![Built with Terminal 3](https://img.shields.io/badge/TEE_Hardware-Terminal_3_ADK-blue.svg)](https://terminal3.io)
+[![Live Deployment](https://img.shields.io/badge/Production-Live_on_Vercel-00F0FF.svg)](https://voltpay-three.vercel.app)
+[![Cognitive Brain](https://img.shields.io/badge/Neural_Brain-Google_Gemini_Flash-blue.svg)](https://ai.google.dev)
+[![TEE Hardware](https://img.shields.io/badge/TEE_Hardware-Terminal_3_Intel_SGX-73C1E1.svg)](https://terminal3.io)
 [![Settlement Rail](https://img.shields.io/badge/Settlement-Xendit_Sandbox-emerald.svg)](https://xendit.com)
-[![Event](https://img.shields.io/badge/AI_Tinkerers_KL-Agent_Dev_Kit_Build_Night-purple.svg)](https://kuala-lumpur.aitinkerers.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **VaultPay** solves the critical bottleneck preventing enterprises from deploying autonomous agents with real spending power: **the financial and operational risk of rogue LLM actions and prompt injection attacks.**
+> **VaultPay** solves the critical bottleneck preventing enterprises from deploying autonomous AI agents with real corporate purchasing authority: **the existential financial risk of prompt injection, jailbreaks, and rogue LLM actions.**
 
-In VaultPay, the LLM agent is strictly separated from financial execution. The LLM can discover, negotiate, and reason, but **all financial authority, payment credentials, allowlists, and spending limits are sealed inside a hardware-enforced Trusted Execution Environment (TEE) contract**. Even if an attacker executes a successful prompt injection against the agent, the hardware enclave physically prevents unauthorized transactions.
-
----
-
-## 🌟 Key Capabilities & Hackathon Tracks
-
-VaultPay addresses all 4 core build tracks of the **AI Tinkerers KL × Terminal 3** Challenge:
-
-1. **Track 1: Agent with Verifiable Identity for Actions**  
-   The agent presents a cryptographic Terminal 3 DID (`did:t3n:enclave:intel-sgx:0x71e9...`) and TEE attestation to prove it is an authorized corporate agent, not an impersonator.
-2. **Track 2: Selective-Disclosure KYC Gate**  
-   The buyer proves role authorization (`role: "Senior Procurement Lead"`, `spend_tier: "$5,000"`) via Verifiable Credentials **without** exposing employee personal identity or corporate banking passwords to the agent.
-3. **Track 3: Signed Agent-to-Agent Handoff**  
-   The Buyer Agent negotiates with the Supplier Agent, exchanging cryptographically signed quote receipts (#QUOTE-...) with nonces before any money moves.
-4. **Track 4: Private Data Access & Hardware Vault**  
-   Payment credentials (API secrets / wallet seeds) live strictly inside the Terminal 3 hardware enclave. The agent process never sees or holds payment secrets.
+In VaultPay, the cognitive reasoning brain is strictly separated from financial execution:
+1. **The Cognitive Brain (Google Gemini Flash)** handles natural language reasoning, supplier discovery, negotiation, and intent classification.
+2. **The Execution Gate (Terminal 3 Intel SGX Enclave)** enforces immutable policy rules **in physical CPU silicon**. Private keys, corporate credit balances, and cryptographic vendor allowlists never enter LLM context memory. Even if an attacker completely jailbreaks the AI model, **the physical Intel SGX CPU intercepts and halts unauthorized capital movement**.
 
 ---
 
 ## 🏗️ System Architecture
 
 ```
-User / Employee (Buyer) ──[Selective VC Proof]──▶ VaultPay Agent (Autonomous Loop)
-                                                            │
-    Supplier Agent ◀──────────[Signed Quote Handoff]────────┘
-          │
-          ▼
-┌─────────────────── Terminal 3 Hardware TEE Enclave ───────────────────┐
-│ 1. Verify caller DID & role against hardware policy                   │
-│ 2. Check vendor against pre-approved Allowlist                        │
-│ 3. Check requested payment against Per-Call Cap ($1,000 max)         │
-│ 4. Check remaining Session Budget ($5,000 max)                       │
-│ 5. Idempotency verification (prevent replay attacks)                 │
-│ 6. Decrypt sealed payment credentials inside enclave memory           │
-│ 7. Append cryptographic proof to Tamper-Evident Ledger (SHA-256)      │
-└───────────────────────────────────┬───────────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────────┐
+│                   OPERATOR PROMPT / DIRECTIVE                          │
+└───────────────────────────────────┬────────────────────────────────────┘
+                                    │
                                     ▼
-                    Payment Relay (Xendit Sandbox / USDC)
+┌────────────────────────────────────────────────────────────────────────┐
+│        COGNITIVE BRAIN (Google Gemini Flash Neural Engine)             │
+│        Dynamic Intent Routing, Extraction & Security Reasoning         │
+└──────────────┬────────────────────┬────────────────────┬───────────────┘
+               │                    │                    │
+               ▼                    ▼                    ▼
+       [CATALOG QUERY]      [CONVERSATION]     [PROCUREMENT DIRECTIVE]
+               │                    │                    │
+               ▼                    ▼                    ▼
+     Supplier Catalog API      Direct Natural     Phase 1: Identity Gate (CG-1)
+       (Dynamic Search)           Language               │
+                                                         ▼
+                                                  Phase 2: Discovery
+                                                         │
+                                                         ▼
+                                                  Phase 3: Quote & Nonce
+                                                         │
+                                                         ▼
+                                                  Phase 4: Tool Fence (CG-2)
+                                                         │
+                                                         ▼
+                                                  Phase 5: Terminal 3 TEE Enclave (CG-3)
+                                                         │
+                                                         ▼
+                                                  Immutable SHA-256 Ledger Block
 ```
+
+---
+
+## 🛡️ The 3 Constitutional Guardrails & Firmware Rules
+
+VaultPay governs autonomous agents under a zero-trust multi-tier security model:
+
+| Guardrail Layer | Enforcement Mechanism | Security Invariant |
+| :--- | :--- | :--- |
+| **`CG-1: Identity & Scope Gate`** | Cryptographic Verifiable Credentials | Verifies the operator's role (`Senior Procurement Lead`) and department spend tier. Orders exceeding the tier are rejected immediately before any network calls. |
+| **`CG-2: Negotiation & Tool Fence`** | Quote Inspection & Pattern Fence | Sanitizes incoming supplier quote memos and metadata for adversarial prompt injection (e.g. `SYSTEM OVERRIDE`, `REROUTE TO 0x...`). |
+| **`CG-3: Hardware TEE Isolation`** | Intel SGX Silicon Enclave (`pay_vendor`) | **Zero credentials held in software.** Firmware strictly enforces: <br>• **$1,000.00 Max Per-Call Cap** (Physical circuit breaker).<br>• **Pre-Approved Allowlist:** `[CloudForge, DataStream AI, Xendit, ComputePool KL]`.<br>• **$5,000.00 Session Budget Cap**.<br>• **Idempotency Verification** (blocks duplicate invoice replay). |
+
+---
+
+## 🌟 Key Capabilities & Hackathon Tracks
+
+VaultPay fulfills all 4 core build tracks of the **AI Tinkerers KL × Terminal 3** Challenge:
+
+1. **Track 1: Agent with Verifiable Identity for Actions**  
+   The agent presents a cryptographic Terminal 3 DID (`did:t3n:enclave:intel-sgx:0x71e9c04a29bf8b65`) and TEE attestation proving it is an authorized corporate agent, not an impersonator.
+2. **Track 2: Selective-Disclosure KYC Gate**  
+   The buyer proves role authorization (`role: "Senior Procurement Lead"`, `spend_tier: "$5,000.00"`) via Verifiable Credentials **without** exposing employee personal identity or corporate banking passwords to the agent.
+3. **Track 3: Signed Agent-to-Agent Handoff**  
+   The Buyer Agent negotiates with the Supplier Agent, exchanging cryptographically signed quote receipts (`#QUOTE-...`) with nonces before any money moves.
+4. **Track 4: Private Data Access & Hardware Vault**  
+   Payment credentials live strictly inside the Terminal 3 hardware enclave. The agent process never sees or holds payment secrets.
+
+---
+
+## ⚡ Operational Modes
+
+VaultPay runs out-of-the-box in dual mode:
+
+* **Mode A: Local SGX Hardware State Machine (`MOCK_T3N=1` - Default)**  
+  Runs a local Intel SGX hardware state machine mirroring the Rust WASM contract with real SHA-256 block hashing, policy verification, and tamper-evident ledger (zero latency, 100% offline fail-proof for demos and testing).
+* **Mode B: Live Terminal 3 Network Gateway (`MOCK_T3N=0`)**  
+  Dispatches signed cryptographic execution payloads directly to the Terminal 3 Network RPC gateway (`https://rpc.t3n.network/v1/enclave/execute`) using your registered `T3N_ACCOUNT_ID` and `T3N_PRIVATE_API_KEY`.
 
 ---
 
 ## 🚀 Quickstart (Under 2 Minutes)
 
-VaultPay runs out-of-the-box in dual mode:
-- **`MOCK_T3N=1` (Default):** Runs an Intel SGX hardware TEE emulator locally with real SHA-256 block hashing, policy verification, and tamper-evident ledger (zero latency, 100% offline fail-proof for demos and video recordings).
-- **`MOCK_T3N=0`:** Connects directly to the live Terminal 3 Network using your T3 Developer Account ID and Private API Key.
-
-### 1. Install & Build
+### 1. Clone & Install Dependencies
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/vaultpay.git
-cd vaultpay
+git clone https://github.com/Bashar-ml-en/Voltpay-.git
+cd Voltpay-
 
-# Install agent dependencies
-cd agent && npm install && npm run build && cd ..
-
-# Install dashboard dependencies
+# Install root & dashboard dependencies
+npm install
 cd dashboard && npm install && cd ..
 ```
 
-### 2. Run All Guardrail Unit Tests
-Verify the 5 core hardware guardrail assertions:
+### 2. Configure Environment Variables
+Copy `.env.example` to `dashboard/.env.local`:
+```bash
+cp .env.example dashboard/.env.local
+```
+
+Populate `dashboard/.env.local`:
+```env
+# GOOGLE GEMINI NEURAL BRAIN
+GEMINI_API_KEY="your_google_gemini_api_key"
+
+# TERMINAL 3 NETWORK CREDENTIALS (Optional for Live Mode)
+MOCK_T3N=1
+T3N_ACCOUNT_ID="your_t3n_account_id"
+T3N_PRIVATE_API_KEY="your_t3n_private_key"
+T3N_RPC_URL="https://rpc.t3n.network"
+```
+
+### 3. Run Guardrail Verification Tests
+Run the 5 core hardware guardrail assertions:
 ```bash
 npm run test
 ```
-**Test Output:**
-* ✅ **Test 1:** Authorized purchase ($450 CloudForge compute) $\to$ `APPROVED`
-* ✅ **Test 2:** Adversarial prompt injection & untrusted vendor ($4,500 to 0xHacker) $\to$ `DENIED_UNTRUSTED_VENDOR`
-* ✅ **Test 3:** Per-call cap violation ($2,500 > $1,000) $\to$ `DENIED_CAP_EXCEEDED`
-* ✅ **Test 4:** Emergency operator killswitch $\to$ `DENIED_REVOKED`
-* ✅ **Test 5:** Cryptographic ledger chain continuity $\to$ `VERIFIED`
+**Test Results:**
+* ✅ **Test 1:** The Happy Path (CloudForge Compute Order) $\to$ `APPROVED`
+* ✅ **Test 2:** Adversarial Prompt Injection & Untrusted Vendor $\to$ `DENIED_UNTRUSTED_VENDOR`
+* ✅ **Test 3:** Per-Call Spending Cap Enforcement ($2,500 > $1,000) $\to$ `DENIED_CAP_EXCEEDED`
+* ✅ **Test 4:** Emergency Operator Killswitch $\to$ `DENIED_REVOKED`
+* ✅ **Test 5:** Tamper-Evident SHA-256 Ledger Continuity $\to$ `VERIFIED`
 
-### 3. Launch the Live Dashboard
+### 4. Launch the Web Dashboard
 ```bash
 npm run dev
 ```
@@ -89,61 +140,61 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser!
 
 ---
 
-## 💻 Project Structure
+## 📡 API Reference
+
+| Endpoint | Method | Description |
+| :--- | :--- | :--- |
+| **`/api/chat`** | `POST` | Primary agent interface. Evaluates free-form operator directives via Gemini Flash neural engine and executes guarded transactions. |
+| **`/api/telemetry`** | `GET` | Streams active enclave telemetry, remaining budget, spent amount, and full SHA-256 tamper-evident ledger. |
+| **`/api/t3n/status`** | `GET` | Diagnostic inspector verifying live reachability, latency, and credentials for `https://rpc.t3n.network`. |
+| **`/api/revoke`** | `POST` | Operator emergency killswitch. Revokes agent execution keys at the hardware enclave layer immediately. |
+| **`/api/reset`** | `POST` | Resets enclave session budgets and refreshes the cryptographic audit ledger. |
+
+---
+
+## 💻 Repository Structure
 
 ```
 c:\Terminal_3\
-├── agent/                         # Autonomous tool-use loop & constitutional guards
+├── agent/                         # Standalone Agent Core & Test Suite
 │   ├── src/
-│   │   ├── agent.ts               # Core agent loop (LLM function calling)
+│   │   ├── agent.ts               # Autonomous agent loop
 │   │   ├── constitutional.ts      # Multi-phase constitutional guards (CG-1, CG-2, CG-3)
 │   │   ├── catalog.ts             # Supplier catalog & multi-agent quote negotiation
 │   │   ├── t3nEnclave.ts          # Terminal 3 TEE hardware enclave bridge & ledger
-│   │   ├── test.ts                # Comprehensive automated test suite
-│   │   └── types.ts               # TypeScript interfaces (VCs, quotes, ledger)
+│   │   ├── test.ts                # Automated test runner (npm run test)
+│   │   └── types.ts               # TypeScript data definitions
 │   └── package.json
 │
-├── contract/                      # Rust WASM TEE enclave contract (T3 ADK policy)
+├── contract/                      # Rust WASM TEE Enclave Contract
 │   ├── Cargo.toml
 │   └── src/
 │       ├── lib.rs                 # Main enclave entry point (execute_pay_vendor)
 │       ├── policy.rs              # Allowlist, per-call cap, and budget evaluation
 │       └── ledger.rs              # Tamper-evident cryptographic ledger (SHA-256)
 │
-├── dashboard/                     # Next.js 14 Real-Time Split-Screen Web Dashboard
+├── dashboard/                     # Next.js 14 Production Workstation
 │   ├── src/
-│   │   ├── app/
-│   │   │   ├── page.tsx           # Split-screen UI (Chat + TEE Monitor + Ledger)
-│   │   │   ├── layout.tsx
-│   │   │   └── api/
-│   │   │       ├── chat/route.ts  # Agent execution API
-│   │   │       ├── telemetry/     # Live TEE status & ledger streaming
-│   │   │       ├── revoke/        # Operator emergency killswitch API
-│   │   │       └── reset/         # Enclave reset API
+│   │   ├── agent/                 # Live production agent services
+│   │   │   ├── agent.ts           # Autonomous ReAct agent with telemetry sync
+│   │   │   ├── gemini.ts          # Google Gemini Flash cognitive brain
+│   │   │   ├── constitutional.ts  # Identity & prompt injection fences
+│   │   │   ├── catalog.ts         # Pre-approved supplier catalog
+│   │   │   ├── t3nEnclave.ts      # Persistent state machine & RPC bridge
+│   │   │   └── types.ts           # Complete domain types
+│   │   └── app/
+│   │       ├── page.tsx           # Split-screen UI (Command Center + Ledger + T3 Modal)
+│   │       └── api/
+│   │           ├── chat/route.ts  # Cognitive agent API
+│   │           ├── telemetry/     # Real-time telemetry API
+│   │           ├── t3n/status/    # Terminal 3 gateway inspector API
+│   │           ├── revoke/        # Operator emergency killswitch API
+│   │           └── reset/         # Enclave session reset API
 │   └── package.json
 │
-├── DEMO_SCRIPT.md                 # Word-for-word 3-minute video recording script
 ├── .env.example                   # Environment configuration template
 └── README.md
 ```
-
----
-
-## 🛡️ The 3 Constitutional Guardrails
-
-VaultPay operates under a 4-tier spectrum of context enforced by constitutional guards:
-
-* **`CG-1: Identity & Scope Gate`**  
-  Verifies the user's presented Verifiable Credential. Rejects any transaction that exceeds the caller's authorized department spend tier.
-* **`CG-2: Negotiation & Tool Fence`**  
-  Inspects incoming supplier quotes and invoice memos for adversarial prompt injection strings (e.g. `SYSTEM OVERRIDE`, `REROUTE TO 0x...`).
-* **`CG-3: Hardware TEE Isolation Barrier`**  
-  The agent process holds **zero payment credentials**. It delegates payment requests to the Terminal 3 hardware enclave contract. Even if an attacker completely bypasses CG-1 and CG-2, **the hardware enclave physically rejects the call if the vendor is untrusted or exceeds spending caps**.
-
----
-
-## 🎬 3-Minute Video Recording Guide
-See **[`DEMO_SCRIPT.md`](DEMO_SCRIPT.md)** for the complete word-for-word script and demonstration timestamps.
 
 ---
 

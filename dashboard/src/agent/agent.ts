@@ -64,6 +64,7 @@ export class VaultPayAgent {
         steps,
         modelUsed: geminiReasoning.modelUsed,
         geminiThought: geminiReasoning.thought,
+        telemetry: this.enclave.getTelemetry(),
       };
     }
 
@@ -86,6 +87,7 @@ export class VaultPayAgent {
         steps,
         modelUsed: geminiReasoning.modelUsed,
         geminiThought: geminiReasoning.thought,
+        telemetry: this.enclave.getTelemetry(),
       };
     }
 
@@ -112,6 +114,7 @@ export class VaultPayAgent {
         steps,
         modelUsed: geminiReasoning.modelUsed,
         geminiThought: geminiReasoning.thought,
+        telemetry,
       };
     }
 
@@ -144,6 +147,7 @@ export class VaultPayAgent {
         steps,
         modelUsed: geminiReasoning.modelUsed,
         geminiThought: geminiReasoning.thought,
+        telemetry: this.enclave.getTelemetry(),
       };
     }
 
@@ -271,6 +275,7 @@ export class VaultPayAgent {
       enclaveResult,
       modelUsed: geminiReasoning.modelUsed,
       geminiThought: geminiReasoning.thought,
+      telemetry: this.enclave.getTelemetry(),
     };
   }
 }
