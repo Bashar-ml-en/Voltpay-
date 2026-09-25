@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "vaultpay": {
+      "command": "node",
+      "args": [
+        "c:/Terminal_3/agent/dist/mcp/stdio.js"
+      ]
+    }
+  }
+}

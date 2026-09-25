@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "vaultpay-remote": {
+      "url": "https://voltpay-three.vercel.app/api/mcp",
+      "transport": "http-jsonrpc",
+      "description": "Remote VaultPay Intel SGX Enclave procurement gateway"
+    }
+  }
+}

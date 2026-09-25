@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "vaultpay": {
+      "command": "node",
+      "args": [
+        "c:/Terminal_3/agent/dist/mcp/stdio.js"
+      ],
+      "env": {
+        "NODE_ENV": "production",
+        "T3N_NETWORK_MODE": "EMULATED_SGX"
+      }
+    }
+  }
+}

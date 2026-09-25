@@ -388,4 +388,12 @@ export class T3NEnclaveService {
       t3nAccountId: accountId ? `${accountId.slice(0, 8)}...` : undefined,
     };
   }
+
+  /**
+   * Return full chronological ledger (index 0 = genesis) for cryptographic verification
+   */
+  public getRawLedger(): LedgerEntry[] {
+    this.loadState();
+    return [...this.ledger];
+  }
 }

@@ -1,14 +1,21 @@
 {
   "name": "vaultpay-agent",
   "version": "0.1.0",
-  "description": "VaultPay Autonomous B2B Procurement Agent with Terminal 3 TEE Guardrails",
+  "description": "VaultPay Autonomous B2B Procurement Agent with Terminal 3 TEE Guardrails and MCP Server",
   "main": "dist/index.js",
+  "bin": {
+    "vaultpay-mcp": "./dist/mcp/stdio.js"
+  },
   "scripts": {
     "build": "tsc",
-    "test": "node dist/test.js"
+    "test": "node dist/test.js",
+    "mcp:start": "node dist/mcp/stdio.js",
+    "mcp:verify": "tsc && node dist/mcp/verify.js"
   },
   "dependencies": {
-    "dotenv": "^16.4.5"
+    "@modelcontextprotocol/sdk": "^1.30.1",
+    "dotenv": "^16.4.5",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^20.14.9",

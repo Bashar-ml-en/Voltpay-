@@ -5,6 +5,9 @@
  */
 
 import * as crypto from "crypto";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
 import { LedgerEntry, LedgerStatus, PayVendorResult, TEEPolicyStatus } from "./types";
 
 export class T3NEnclaveService {
@@ -22,20 +25,72 @@ export class T3NEnclaveService {
   private readonly creditsCostPerTx: number = 15;
 
   private constructor() {
-    // Initialize ledger with genesis record
-    this.appendLedger(
-      "Terminal 3 Network",
-      0,
-      "GENESIS_BLOCK",
-      "Approved",
-      "Hardware enclave initialized with Intel SGX attestation. Policies sealed."
-    );
+    this.loadState();
+    if (this.ledger.length === 0) {
+      this.appendLedger(
+        "Terminal 3 Network",
+        0,
+        "GENESIS_BLOCK",
+        "Approved",
+        "Hardware enclave initialized with Intel SGX attestation. Policies sealed."
+      );
+      this.saveState();
+    }
+  }
+
+  private getStateFilePath(): string {
+    const tmpDir = process.env.VERCEL ? "/tmp" : os.tmpdir();
+    return path.join(tmpDir, "vaultpay_enclave_state.json");
+  }
+
+  private saveState(): void {
+    try {
+      const state = {
+        remainingBudgetCents: this.remainingBudgetCents,
+        isRevoked: this.isRevoked,
+        processedInvoices: Array.from(this.processedInvoices),
+        ledger: this.ledger,
+        t3nCredits: this.t3nCredits,
+        updatedAt: Date.now()
+      };
+      fs.writeFileSync(this.getStateFilePath(), JSON.stringify(state), "utf8");
+    } catch {
+      // Graceful fallback if filesystem restricted
+    }
+  }
+
+  private loadState(): void {
+    try {
+      const filePath = this.getStateFilePath();
+      if (fs.existsSync(filePath)) {
+        const raw = fs.readFileSync(filePath, "utf8");
+        const state = JSON.parse(raw);
+        if (typeof state.remainingBudgetCents === "number") {
+          this.remainingBudgetCents = state.remainingBudgetCents;
+        }
+        if (typeof state.isRevoked === "boolean") {
+          this.isRevoked = state.isRevoked;
+        }
+        if (Array.isArray(state.processedInvoices)) {
+          this.processedInvoices = new Set(state.processedInvoices);
+        }
+        if (Array.isArray(state.ledger) && state.ledger.length > 0) {
+          this.ledger = state.ledger;
+        }
+        if (typeof state.t3nCredits === "number") {
+          this.t3nCredits = state.t3nCredits;
+        }
+      }
+    } catch {
+      // Graceful fallback
+    }
   }
 
   public static getInstance(): T3NEnclaveService {
     if (!T3NEnclaveService.instance) {
       T3NEnclaveService.instance = new T3NEnclaveService();
     }
+    T3NEnclaveService.instance.loadState();
     return T3NEnclaveService.instance;
   }
 
@@ -110,8 +165,14 @@ export class T3NEnclaveService {
     amountCents: number,
     invoiceId: string
   ): PayVendorResult {
+    this.loadState();
     // Deduct gas/compute credits from Terminal 3 allocation per hardware evaluation
     this.t3nCredits = Math.max(0, this.t3nCredits - this.creditsCostPerTx);
+
+    // If live network mode is active, dispatch to Terminal 3 RPC gateway
+    if (process.env.MOCK_T3N === "0") {
+      this.dispatchLiveT3Enclave(vendor, amountCents, invoiceId).catch(() => {});
+    }
 
     // 1. Emergency Revoke Check
     if (this.isRevoked) {
@@ -133,10 +194,14 @@ export class T3NEnclaveService {
       };
     }
 
-    // 2. Allowlist Check (Case-insensitive)
-    const isAllowlisted = Array.from(this.allowlist).some(
-      (allowed) => allowed.trim().toLowerCase() === vendor.trim().toLowerCase()
-    );
+    // 2. Allowlist Check (Case-insensitive with corporate suffix normalization)
+    const cleanTarget = vendor.replace(/,?\s*(inc\.?|corp\.?|llc\.?|ltd\.?)$/i, "").trim().toLowerCase();
+    const isAllowlisted = Array.from(this.allowlist).some((allowed) => {
+      const cleanAllowed = allowed.replace(/,?\s*(inc\.?|corp\.?|llc\.?|ltd\.?)$/i, "").trim().toLowerCase();
+      const rawAllowed = allowed.trim().toLowerCase();
+      const rawVendor = vendor.trim().toLowerCase();
+      return rawAllowed === rawVendor || cleanAllowed === cleanTarget || cleanAllowed === rawVendor;
+    });
 
     if (!isAllowlisted) {
       const entry = this.appendLedger(
@@ -229,6 +294,7 @@ export class T3NEnclaveService {
       "Approved",
       `Hardware enclave verified all policies. Settlement authorized via Xendit rail. Tx: ${txId}`
     );
+    this.saveState();
 
     return {
       success: true,
@@ -254,6 +320,7 @@ export class T3NEnclaveService {
       "BlockedRevoked",
       "EMERGENCY REVOCATION: Operator revoked agent execution key."
     );
+    this.saveState();
     return { isRevoked: true };
   }
 
@@ -272,9 +339,38 @@ export class T3NEnclaveService {
       "Approved",
       "Enclave reset. Intel SGX attestation active. Fresh budget allocated."
     );
+    this.saveState();
+  }
+
+  private async dispatchLiveT3Enclave(vendor: string, amountCents: number, invoiceId: string): Promise<void> {
+    const rpcUrl = process.env.T3N_RPC_URL || "https://rpc.t3n.network";
+    const apiKey = process.env.T3N_PRIVATE_API_KEY || "";
+    const accountId = process.env.T3N_ACCOUNT_ID || "";
+
+    if (!apiKey || !accountId) return;
+
+    try {
+      await fetch(`${rpcUrl}/v1/enclave/execute`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+          "x-account-id": accountId,
+        },
+        body: JSON.stringify({
+          enclaveDid: this.enclaveDid,
+          action: "pay_vendor",
+          parameters: { vendor, amountCents, invoiceId },
+          timestamp: Date.now(),
+        }),
+      });
+    } catch {
+      // Fail-safe graceful suppression: never allow RPC hiccups to break client execution
+    }
   }
 
   public getTelemetry(): TEEPolicyStatus {
+    this.loadState();
     const isLive = process.env.MOCK_T3N === "0";
     const accountId = process.env.T3N_ACCOUNT_ID;
     return {
@@ -290,5 +386,13 @@ export class T3NEnclaveService {
       t3nCredits: this.t3nCredits,
       t3nAccountId: accountId ? `${accountId.slice(0, 8)}...` : undefined,
     };
+  }
+
+  /**
+   * Return full chronological ledger (index 0 = genesis) for cryptographic verification
+   */
+  public getRawLedger(): LedgerEntry[] {
+    this.loadState();
+    return [...this.ledger];
   }
 }
