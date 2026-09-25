@@ -1,6 +1,7 @@
 # VaultPay 🛡️💳
 ### Autonomous B2B Procurement Agent with Terminal 3 Intel SGX Hardware Enclave Guardrails
 
+[![CI](https://github.com/Bashar-ml-en/Vault-pay/actions/workflows/ci.yml/badge.svg)](https://github.com/Bashar-ml-en/Vault-pay/actions)
 [![Live Deployment](https://img.shields.io/badge/Production-Live_on_Vercel-00F0FF.svg)](https://voltpay-three.vercel.app)
 [![Cognitive Brain](https://img.shields.io/badge/Neural_Brain-Google_Gemini_Flash-blue.svg)](https://ai.google.dev)
 [![TEE Hardware](https://img.shields.io/badge/TEE_Hardware-Terminal_3_Intel_SGX-73C1E1.svg)](https://terminal3.io)
@@ -10,9 +11,16 @@
 
 > **VaultPay** solves the critical bottleneck preventing enterprises from deploying autonomous AI agents with real corporate purchasing authority: **the existential financial risk of prompt injection, jailbreaks, and rogue LLM actions.**
 
+📚 **Core Engineering Specifications & Whitepapers:**
+- 📐 **[System Architecture Blueprint (ARCHITECTURE.md)](ARCHITECTURE.md)**: Deep dive into the 3-tier architecture, sequence diagrams, and cryptographic formulas.
+- 🛡️ **[STRIDE Threat Model & Security Posture (THREAT_MODEL.md)](THREAT_MODEL.md)**: Formal zero-trust threat analysis and hardware mitigations.
+- 🔒 **[Security Policy & Vulnerability Reporting (SECURITY.md)](SECURITY.md)**: Responsible disclosure guidelines and cryptographic boundaries.
+- 🤝 **[Contributor Guidelines & Testing Standards (CONTRIBUTING.md)](CONTRIBUTING.md)**: Development setup, PR processes, and testing invariants.
+
 In VaultPay, the cognitive reasoning brain is strictly separated from financial execution:
 1. **The Cognitive Brain (Google Gemini Flash)** handles natural language reasoning, supplier discovery, negotiation, and intent classification.
 2. **The Execution Gate (Terminal 3 Intel SGX Enclave)** enforces immutable policy rules **in physical CPU silicon**. Private keys, corporate credit balances, and cryptographic vendor allowlists never enter LLM context memory. Even if an attacker completely jailbreaks the AI model, **the physical Intel SGX CPU intercepts and halts unauthorized capital movement**.
+
 
 ---
 

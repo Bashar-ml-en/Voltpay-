@@ -1,0 +1,38 @@
+name: Bug Report
+description: Create a report to help us improve VaultPay
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a bug in VaultPay!
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps To Reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Run `...`
+        2. Execute procurement directive `...`
+        3. See error
+    validations:
+      required: true
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      options:
+        - Cognitive Brain (Gemini Flash)
+        - Model Context Protocol (MCP Server)
+        - Intel SGX TEE Enclave
+        - Next.js 14 Dashboard
+        - Settlement Rail (Xendit)
+    validations:
+      required: true

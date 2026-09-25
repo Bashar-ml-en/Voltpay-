@@ -1,14 +1,18 @@
 {
   "name": "vaultpay",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "VaultPay: Autonomous B2B Procurement Agent with Terminal 3 TEE Hardware Enclave Guardrails",
+  "description": "VaultPay: Autonomous B2B Procurement Agent with Terminal 3 TEE Hardware Enclave Guardrails and Model Context Protocol (MCP)",
   "scripts": {
     "dev": "npm run dev --prefix dashboard",
     "test": "npm run test --prefix agent",
+    "test:all": "npm run test --prefix agent && npm run mcp:verify --prefix agent",
+    "mcp:start": "npm run mcp:start --prefix agent",
+    "mcp:verify": "npm run mcp:verify --prefix agent",
     "build:agent": "npm run build --prefix agent",
     "build:dashboard": "npm run build --prefix dashboard",
     "build": "npm run build --prefix dashboard",
+    "build:all": "npm run build --prefix agent && npm run build --prefix dashboard",
     "start": "npm run start --prefix dashboard"
   },
   "dependencies": {
@@ -26,12 +30,16 @@
   "keywords": [
     "terminal-3",
     "tee",
+    "intel-sgx",
+    "mcp",
+    "model-context-protocol",
     "ai-agent",
     "autonomous-agent",
     "xendit",
     "verifiable-credentials",
-    "ai-tinkerers"
+    "ai-tinkerers",
+    "gemini"
   ],
-  "author": "VaultPay Team",
+  "author": "Bashar & VaultPay Contributors",
   "license": "MIT"
 }

@@ -1,0 +1,51 @@
+name: VaultPay Continuous Integration (CI)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-verify:
+    name: Build, Conformance & Security Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            agent/package-lock.json
+            dashboard/package-lock.json
+
+      - name: Install Root Dependencies
+        run: npm install
+
+      - name: Build Agent & MCP Package
+        working-directory: ./agent
+        run: |
+          npm install
+          npm run build
+
+      - name: Run Core Agent & Guardrail Test Suite
+        working-directory: ./agent
+        run: npm run test
+
+      - name: Run Model Context Protocol (MCP) End-to-End Verification
+        working-directory: ./agent
+        run: npm run mcp:verify
+
+      - name: Build Next.js 14 Production Dashboard
+        working-directory: ./dashboard
+        env:
+          NEXT_PUBLIC_BASE_URL: "https://voltpay-three.vercel.app"
+        run: |
+          npm install
+          npm run build
